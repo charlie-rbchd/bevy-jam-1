@@ -13,5 +13,8 @@ indent_size = 4
 # denotes a line break in Markdown
 trim_trailing_whitespace = false
 
+[*.ldtk]
+indent_style = tab
+
 [*.{yml,json}]
 indent_size = 2
