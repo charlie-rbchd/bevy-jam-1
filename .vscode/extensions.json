@@ -6,6 +6,7 @@
     "matklad.rust-analyzer",
     "bungcip.better-toml",
     "vadimcn.vscode-lldb",
+    "ms-vscode.cpptools",
     "EditorConfig.EditorConfig"
   ],
   // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
