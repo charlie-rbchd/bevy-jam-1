@@ -60,7 +60,7 @@
 			"pxOffsetY": 0,
 			"requiredTags": [],
 			"excludedTags": [],
-			"intGridValues": [ { "value": 1, "identifier": "Collision", "color": "#000000" }, { "value": 2, "identifier": "Ladder", "color": "#FF0000" } ],
+			"intGridValues": [ { "value": 1, "identifier": "Wall", "color": "#000000" }, { "value": 2, "identifier": "Ladder", "color": "#FF0000" } ],
 			"autoTilesetDefUid": 4,
 			"autoRuleGroups": [
 				{ "uid": 18, "name": "Ladder", "active": true, "collapsed": false, "isOptional": false, "rules": [
