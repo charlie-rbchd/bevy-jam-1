@@ -4,13 +4,6 @@ use bevy_ecs_ldtk::prelude::*;
 #[derive(Clone, Component)]
 pub struct Speed(pub f32);
 
-// impl Into<f32> for Speed {
-//     fn into(self: Self) -> f32 {
-//         let Speed(ret) = self;
-//         ret
-//     }
-// }
-
 #[derive(Clone, Component)]
 pub struct Damage(pub u16);
 
