@@ -13,11 +13,33 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
 }
 
+const TILE_SIZE: u8 = 64;
+
+pub fn movement(
+    input: Res<Input<KeyCode>>,
+    mut player_query: Query<(&Speed, &mut Transform), With<Player>>,
+) {
+    if let Ok((speed, mut transform)) = player_query.get_single_mut() {
+        let mut direction = 0.0;
+        if input.just_pressed(KeyCode::A) || input.just_pressed(KeyCode::Left) {
+            direction -= 1.0;
+        }
+        if input.just_pressed(KeyCode::D) || input.just_pressed(KeyCode::Right) {
+            direction += 1.0;
+        }
+        let dx: f32 = TILE_SIZE as f32 * direction * speed.0;
+        transform.translation.x += dx;
+    }
+}
+
 const ASPECT_RATIO: f32 = 16.0 / 9.0;
 
 pub fn camera_fit_inside_current_level(
     mut camera_query: Query<
-        (&mut bevy::render::camera::OrthographicProjection, &mut Transform),
+        (
+            &mut bevy::render::camera::OrthographicProjection,
+            &mut Transform,
+        ),
         Without<Player>,
     >,
     player_query: Query<&Transform, With<Player>>,

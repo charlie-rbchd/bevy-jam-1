@@ -1,17 +1,55 @@
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 
+#[derive(Clone, Component)]
+pub struct Speed(pub f32);
+
+// impl Into<f32> for Speed {
+//     fn into(self: Self) -> f32 {
+//         let Speed(ret) = self;
+//         ret
+//     }
+// }
+
+#[derive(Clone, Component)]
+pub struct Damage(pub u16);
+
+#[derive(Clone, Component)]
+pub struct Health(pub u16);
+
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component)]
 pub struct Player;
 
-#[derive(Clone, Default, Bundle, LdtkEntity)]
+#[derive(Clone, Bundle)]
 pub struct PlayerBundle {
-    #[sprite_bundle("Player.png")]
     #[bundle]
     pub sprite_bundle: SpriteBundle,
     pub player: Player,
-    #[worldly]
-    pub worldly: Worldly,
+    pub speed: Speed,
+    pub damage: Damage,
+    pub health: Health,
+}
+
+impl LdtkEntity for PlayerBundle {
+    fn bundle_entity(
+        _: &EntityInstance,
+        _: &LayerInstance,
+        _: Option<&Handle<Image>>,
+        _: Option<&TilesetDefinition>,
+        asset_server: &AssetServer,
+        _: &mut Assets<TextureAtlas>,
+    ) -> PlayerBundle {
+        PlayerBundle {
+            sprite_bundle: SpriteBundle {
+                texture: asset_server.load("Player.png"),
+                ..Default::default()
+            },
+            player: Player::default(),
+            speed: Speed(1.0),
+            damage: Damage(0),
+            health: Health(100),
+        }
+    }
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component)]
