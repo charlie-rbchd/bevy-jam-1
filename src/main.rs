@@ -29,6 +29,7 @@ fn main() {
         .register_ldtk_entity::<components::PlayerBundle>("Player")
         .add_startup_system(systems::setup)
         .add_system(systems::generate_collision_map)
+        .add_system(systems::camera_fit_inside_current_level)
         .add_system_set(
             SystemSet::new()
                 .label(SystemOrder::InputHandling)
@@ -39,7 +40,6 @@ fn main() {
                 .label(SystemOrder::WorldUpdate)
                 .after(SystemOrder::InputHandling)
                 .with_run_criteria(systems::run_if_player_moved)
-                .with_system(systems::camera_fit_inside_current_level)
                 .with_system(systems::gravity)
                 .with_system(systems::update_world),
         )
