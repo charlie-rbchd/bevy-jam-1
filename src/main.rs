@@ -38,6 +38,7 @@ fn main() {
             SystemSet::new()
                 .label(SystemOrder::WorldUpdate)
                 .after(SystemOrder::InputHandling)
+                .with_run_criteria(systems::run_if_player_moved)
                 .with_system(systems::camera_fit_inside_current_level)
                 .with_system(systems::update_world),
         )

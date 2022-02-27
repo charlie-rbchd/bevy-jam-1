@@ -1,4 +1,5 @@
 use crate::components::*;
+use bevy::ecs::schedule::*;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 
@@ -47,10 +48,7 @@ pub fn movement(
     mut turn_state: ResMut<TurnState>,
     mut player_query: Query<(&Speed, &mut Transform), With<Player>>,
 ) {
-    if turn_state.player_just_took_turn {
-        // player cannot play twice in a row
-        return;
-    }
+    turn_state.player_just_took_turn = false;
 
     if let Ok((speed, mut transform)) = player_query.get_single_mut() {
         let mut direction = (0.0, 0.0);
@@ -96,11 +94,16 @@ pub fn movement(
     }
 }
 
-pub fn update_world(mut turn_state: ResMut<TurnState>) {
+pub fn run_if_player_moved(turn_state: Res<TurnState>) -> ShouldRun {
     if turn_state.player_just_took_turn {
-        // TODO: update the world
-        turn_state.player_just_took_turn = false;
+        ShouldRun::Yes
+    } else {
+        ShouldRun::No
     }
+}
+
+pub fn update_world() {
+    println!("update_world");
 }
 
 const ASPECT_RATIO: f32 = 16.0 / 9.0;
