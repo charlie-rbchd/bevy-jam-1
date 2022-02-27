@@ -194,11 +194,13 @@ pub fn movement(
     input: Res<Input<KeyCode>>,
     tile_map: Res<TileMap>,
     mut turn_state: ResMut<TurnState>,
-    mut player_query: Query<(&Speed, &mut Transform), With<Player>>,
+    mut player_query: Query<(&Speed, &mut Health, &mut Transform), With<Player>>,
 ) {
     turn_state.player_just_took_turn = false;
 
-    if let Ok((player_speed, mut player_transform)) = player_query.get_single_mut() {
+    if let Ok((player_speed, mut player_health, mut player_transform)) =
+        player_query.get_single_mut()
+    {
         let mut direction = (0.0, 0.0);
         if input.just_pressed(KeyCode::A) || input.just_pressed(KeyCode::Left) {
             direction.0 -= 1.0;
@@ -250,15 +252,33 @@ pub fn movement(
             }
 
             // Apply gravity
-            apply_gravity(tile_map, turn_state, &mut player_transform)
+            apply_gravity(
+                &tile_map,
+                &mut turn_state,
+                &mut player_transform,
+                &mut player_health,
+            );
         }
     }
 }
 
-pub fn apply_gravity(
-    tile_map: Res<TileMap>,
-    mut turn_state: ResMut<TurnState>,
+pub fn check_for_player_death(
+    mut app_state: ResMut<State<AppState>>,
+    player_query: Query<&Health, (With<Player>, Changed<Health>)>,
+) {
+    if let Ok(player_health) = player_query.get_single() {
+        if player_health.0 <= 0 {
+            app_state.as_mut().set(AppState::MainMenu).unwrap();
+            // TODO: reset world state
+        }
+    }
+}
+
+fn apply_gravity(
+    tile_map: &Res<TileMap>,
+    turn_state: &mut ResMut<TurnState>,
     mut player_transform: &mut Transform,
+    mut player_health: &mut Health,
 ) {
     let current_position = &player_transform.translation;
     let mut tile_under_player = get_nearest_tile_on_grid(current_position.x, current_position.y);
@@ -273,12 +293,12 @@ pub fn apply_gravity(
         let mut new_position = current_position.clone();
         new_position.y -= TILE_SIZE as f32;
 
-        // TODO: trigger death when player reaches the edge of the level
-
         player_transform.translation = new_position;
+        if !is_position_in_bounds(new_position.y) {
+            player_health.0 = 0; // the player has fallen to their death
+        }
     }
 }
-
 pub fn run_if_player_turn_over(turn_state: Res<TurnState>) -> ShouldRun {
     if turn_state.player_just_took_turn {
         ShouldRun::Yes
@@ -294,26 +314,30 @@ fn entities_are_overlapping(t1: &Transform, t2: &Transform) -> bool {
 }
 
 pub fn update_world(
+    mut commands: Commands,
     mut player_query: Query<(&mut Health, &Damage, &Transform), With<Player>>,
-    mut obstacle_query: Query<(&mut Health, &Damage, &Transform), Without<Player>>,
+    mut obstacle_query: Query<(Entity, &mut Health, &Damage, &Transform), Without<Player>>,
 ) {
     println!("update_world");
 
     if let Ok((mut player_health, player_damage, player_transform)) = player_query.get_single_mut()
     {
-        for (mut obstacle_health, obstacle_damage, obstacle_transform) in obstacle_query.iter_mut()
+        for (obstacle_entity, mut obstacle_health, obstacle_damage, obstacle_transform) in
+            obstacle_query.iter_mut()
         {
             if entities_are_overlapping(player_transform, obstacle_transform) {
                 if player_damage.0 > 0 && obstacle_health.0 > 0 {
-                    obstacle_health.0 -= player_damage.0;
                     println!("player dealt {} damage to an obstacle", player_damage.0);
-                }
-                if obstacle_damage.0 > 0 && player_health.0 > 0 {
-                    player_health.0 -= obstacle_damage.0;
-                    println!("obstacle dealt {} damage to the player", obstacle_damage.0);
+                    obstacle_health.0 -= player_damage.0;
+                    if obstacle_health.0 <= 0 {
+                        commands.entity(obstacle_entity).despawn();
+                    }
                 }
 
-                // todo: check if either the player or the obstacle is dead and trigger the necessary conditions
+                if obstacle_damage.0 > 0 && player_health.0 > 0 {
+                    println!("obstacle dealt {} damage to the player", obstacle_damage.0);
+                    player_health.0 -= obstacle_damage.0;
+                }
             }
         }
     }
