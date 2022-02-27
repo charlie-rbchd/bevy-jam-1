@@ -5,7 +5,10 @@ use bevy_ecs_ldtk::prelude::*;
 
 const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
 const HOVERED_BUTTON: Color = Color::rgb(0.25, 0.25, 0.25);
-const PRESSED_BUTTON: Color = Color::rgb(0.35, 0.75, 0.35);
+
+const SPEED_BUTTON_LABEL: &str = "SPEED";
+const STRENGTH_BUTTON_LABEL: &str = "STRENGTH";
+const HEALTH_BUTTON_LABEL: &str = "HEALTH";
 
 pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn_bundle(LdtkWorldBundle {
@@ -13,32 +16,38 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         ..Default::default()
     });
 
-    commands
-        .spawn_bundle(ButtonBundle {
-            style: Style {
-                size: Size::new(Val::Px(250.0), Val::Px(65.0)),
-                margin: Rect::all(Val::Auto),
-                justify_content: JustifyContent::Center,
-                align_items: AlignItems::Center,
+    for label in vec![
+        SPEED_BUTTON_LABEL,
+        STRENGTH_BUTTON_LABEL,
+        HEALTH_BUTTON_LABEL,
+    ] {
+        commands
+            .spawn_bundle(ButtonBundle {
+                style: Style {
+                    size: Size::new(Val::Px(250.0), Val::Px(65.0)),
+                    margin: Rect::all(Val::Auto),
+                    justify_content: JustifyContent::Center,
+                    align_items: AlignItems::Center,
+                    ..Default::default()
+                },
+                color: NORMAL_BUTTON.into(),
                 ..Default::default()
-            },
-            color: NORMAL_BUTTON.into(),
-            ..Default::default()
-        })
-        .with_children(|parent| {
-            parent.spawn_bundle(TextBundle {
-                text: Text::with_section(
-                    "Start Game",
-                    TextStyle {
-                        font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                        font_size: 40.0,
-                        color: Color::rgb(0.9, 0.9, 0.9),
-                    },
-                    Default::default(),
-                ),
-                ..Default::default()
+            })
+            .with_children(|parent| {
+                parent.spawn_bundle(TextBundle {
+                    text: Text::with_section(
+                        label,
+                        TextStyle {
+                            font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                            font_size: 40.0,
+                            color: Color::rgb(0.9, 0.9, 0.9),
+                        },
+                        Default::default(),
+                    ),
+                    ..Default::default()
+                });
             });
-        });
+    }
 }
 
 pub fn setup_menu(mut commands: Commands) {
@@ -53,15 +62,36 @@ pub fn close_menu(mut commands: Commands, mut camera_query: Query<(Entity, &Came
 
 pub fn handle_ui_buttons(
     mut interaction_query: Query<
-        (&Interaction, &mut UiColor),
+        (&Interaction, &mut UiColor, &Children),
         (Changed<Interaction>, With<Button>),
     >,
     mut app_state: ResMut<State<AppState>>,
+    mut text_query: Query<&mut Text>,
+    mut player_query: Query<(&mut Speed, &mut Damage, &mut Health), With<Player>>,
 ) {
-    for (interaction, mut color) in interaction_query.iter_mut() {
+    for (interaction, mut color, children) in interaction_query.iter_mut() {
+        let text = text_query.get_mut(children[0]).unwrap();
         match *interaction {
             Interaction::Clicked => {
-                *color = PRESSED_BUTTON.into();
+                match text.sections[0].value.as_str() {
+                    SPEED_BUTTON_LABEL => {
+                        println!("player chose speed");
+                        let (mut speed, _, _) = player_query.single_mut();
+                        speed.0 = 2.0;
+                    }
+                    STRENGTH_BUTTON_LABEL => {
+                        println!("player chose strength");
+                        let (_, mut damage, _) = player_query.single_mut();
+                        damage.0 = 100;
+                    }
+                    HEALTH_BUTTON_LABEL => {
+                        println!("player chose health");
+                        let (_, _, mut health) = player_query.single_mut();
+                        health.0 = 1000;
+                    }
+                    _ => panic!("unknown button"),
+                }
+
                 app_state.set(AppState::InGame).unwrap();
             }
             Interaction::Hovered => {
