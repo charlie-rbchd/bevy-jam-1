@@ -44,8 +44,14 @@ pub fn generate_collision_map(
 pub fn movement(
     input: Res<Input<KeyCode>>,
     tile_map: Res<TileMap>,
+    mut turn_state: ResMut<TurnState>,
     mut player_query: Query<(&Speed, &mut Transform), With<Player>>,
 ) {
+    if turn_state.player_just_took_turn {
+        // player cannot play twice in a row
+        return;
+    }
+
     if let Ok((speed, mut transform)) = player_query.get_single_mut() {
         let mut direction = (0.0, 0.0);
         if input.just_pressed(KeyCode::A) || input.just_pressed(KeyCode::Left) {
@@ -83,9 +89,17 @@ pub fn movement(
 
         // TODO: check for collisions with the edge of the level
 
-        if new_position_is_valid.0 && new_position_is_valid.1 {
+        if new_position != *current_position && new_position_is_valid.0 && new_position_is_valid.1 {
             transform.translation = new_position;
+            turn_state.player_just_took_turn = true;
         }
+    }
+}
+
+pub fn update_world(mut turn_state: ResMut<TurnState>) {
+    if turn_state.player_just_took_turn {
+        // TODO: update the world
+        turn_state.player_just_took_turn = false;
     }
 }
 
