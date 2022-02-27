@@ -11,6 +11,7 @@ enum SystemOrder {
     InputHandling,
     WorldTick,
     Camera,
+    WorldTeardown,
 }
 
 fn main() {
@@ -29,34 +30,51 @@ fn main() {
             ..Default::default()
         })
         // .insert_resource(ReportExecutionOrderAmbiguities)
+        .add_state(components::AppState::MainMenu)
         .register_ldtk_int_cell::<components::WallBundle>(1)
         .register_ldtk_int_cell::<components::LadderBundle>(2)
         .register_ldtk_entity::<components::PlayerBundle>("Player")
         .register_ldtk_entity::<components::ObstacleBundle>("Obstacle")
         .add_startup_system(systems::setup)
         .add_system_set(
-            SystemSet::new()
+            SystemSet::on_enter(components::AppState::InGame)
                 .label(SystemOrder::WorldGeneration)
+                .with_system(systems::setup_world)
                 .with_system(systems::generate_collision_map),
         )
         .add_system_set(
-            SystemSet::new()
+            SystemSet::on_update(components::AppState::InGame)
                 .label(SystemOrder::InputHandling)
                 .after(SystemOrder::WorldGeneration)
                 .with_system(systems::movement),
         )
         .add_system_set(
-            SystemSet::new()
+            SystemSet::on_update(components::AppState::InGame)
                 .label(SystemOrder::Camera)
                 .after(SystemOrder::InputHandling)
                 .with_system(systems::camera_fit_inside_current_level),
         )
         .add_system_set(
-            SystemSet::new()
+            SystemSet::on_update(components::AppState::InGame)
                 .label(SystemOrder::WorldTick)
                 .after(SystemOrder::InputHandling)
                 .with_run_criteria(systems::run_if_player_moved)
                 .with_system(systems::update_world),
+        )
+        .add_system_set(
+            SystemSet::on_exit(components::AppState::InGame)
+                .label(SystemOrder::WorldTeardown)
+                .with_system(systems::teardown_world),
+        )
+        .add_system_set(
+            SystemSet::on_enter(components::AppState::MainMenu).with_system(systems::setup_menu),
+        )
+        .add_system_set(
+            SystemSet::on_update(components::AppState::MainMenu)
+                .with_system(systems::handle_ui_buttons),
+        )
+        .add_system_set(
+            SystemSet::on_exit(components::AppState::MainMenu).with_system(systems::close_menu),
         )
         .run();
 }

@@ -12,6 +12,12 @@ pub enum TileType {
 #[derive(Default)]
 pub struct TileMap(pub HashMap<(i32, i32), TileType>);
 
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+pub enum AppState {
+    MainMenu,
+    InGame,
+}
+
 pub struct TurnState {
     pub player_just_took_turn: bool,
     pub player_is_falling: bool,
