@@ -7,6 +7,7 @@ use std::string::String;
 pub enum TileType {
     Wall,
     Ladder,
+    FallingIce
 }
 
 #[derive(Default)]
@@ -143,17 +144,57 @@ impl LdtkEntity for ObstacleBundle {
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component)]
-pub struct Wall;
+pub struct WallTile;
 
 #[derive(Clone, Debug, Default, Bundle, LdtkIntCell)]
-pub struct WallBundle {
-    wall: Wall,
+pub struct WallTileBundle {
+    wall: WallTile,
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component)]
-pub struct Climbable;
+pub struct ClimbableTile;
 
 #[derive(Clone, Debug, Default, Bundle, LdtkIntCell)]
-pub struct LadderBundle {
-    pub climbable: Climbable,
+pub struct ClimableTileBundle {
+    pub climbable: ClimbableTile,
+}
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component)]
+pub struct FallingIceTile;
+
+#[derive(Clone, Debug, Default, Bundle, LdtkIntCell)]
+pub struct FallingIceTileBundle {
+    pub falling_ice: FallingIceTile,
+}
+
+// The actual falling ice, when the player goes underneath
+// the falling ice tile
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component)]
+pub struct FallingIce;
+
+#[derive(Clone, Bundle)]
+pub struct FallingIceBundle {
+    #[bundle]
+    pub sprite_bundle: SpriteBundle,
+    pub falling_ice: FallingIce,
+}
+
+impl LdtkEntity for FallingIceBundle {
+    fn bundle_entity(
+        _: &EntityInstance,
+        _: &LayerInstance,
+        _: Option<&Handle<Image>>,
+        _: Option<&TilesetDefinition>,
+        asset_server: &AssetServer,
+        _: &mut Assets<TextureAtlas>,
+    ) -> Self {
+        let texture_filename = String::from("FallingIce_Dynamic.png");
+        Self {
+            sprite_bundle: SpriteBundle {
+                texture: asset_server.load(&texture_filename),
+                ..Default::default()
+            },
+            falling_ice: FallingIce::default(),
+        }
+    }
 }

@@ -27,9 +27,11 @@ fn is_position_in_bounds(x_or_y: f32) -> bool {
 }
 
 pub fn generate_collision_map(
+    // mut commands: Commands,
     mut tile_map: ResMut<TileMap>,
-    wall_query: Query<&Transform, Added<Wall>>,
-    climbable_query: Query<&Transform, Added<Climbable>>,
+    wall_query: Query<&Transform, Added<WallTile>>,
+    climbable_query: Query<&Transform, Added<ClimbableTile>>,
+    falling_ice_query: Query<&Transform, Added<FallingIceTile>>,
 ) {
     for wall_transform in wall_query.iter() {
         tile_map.0.insert(
@@ -44,6 +46,15 @@ pub fn generate_collision_map(
                 climbable_transform.translation.y,
             ),
             TileType::Ladder,
+        );
+    }
+
+    // Add entities for falling ice
+    // They'll start moving once play is underneath
+    for transform in falling_ice_query.iter() {
+        tile_map.0.insert(
+            get_nearest_tile_on_grid(transform.translation.x, transform.translation.y),
+            TileType::FallingIce,
         );
     }
 }
@@ -89,7 +100,7 @@ pub fn movement(
                 TileType::Wall => {
                     new_position_is_valid.0 = false;
                 }
-                TileType::Ladder => {
+                TileType::Ladder | TileType::FallingIce => {
                     new_position_is_valid.1 = true;
                 }
             }
@@ -172,6 +183,27 @@ pub fn update_world(
 
                 // todo: check if either the player or the obstacle is dead and trigger the necessary conditions
             }
+        }
+    }
+}
+
+pub fn update_falling_ice(tile_map: Res<TileMap>, player_query: Query<&Transform, With<Player>>) {
+    let transform = player_query.single();
+    let (x, y) = get_nearest_tile_on_grid(transform.translation.x, transform.translation.y);
+
+    for j in y..WORLD_SIZE {
+        let tile_to_inspect = (x, j);
+        match tile_map.0.get(&tile_to_inspect) {
+            Some(TileType::Wall) => {
+                println!("Found wall!");
+                break;
+            }
+            Some(TileType::FallingIce) => {
+                println!("Found falling ice!");
+                break;
+            }
+            Some(TileType::Ladder) => {} // go through
+            None => {}                   // keep going
         }
     }
 }
