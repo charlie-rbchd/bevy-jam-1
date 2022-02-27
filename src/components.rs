@@ -1,6 +1,16 @@
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 
+use std::collections::HashMap;
+
+pub enum TileType {
+    Wall,
+    Ladder,
+}
+
+#[derive(Default)]
+pub struct TileMap(pub HashMap<(u32, u32), TileType>);
+
 #[derive(Clone, Component)]
 pub struct Speed(pub f32);
 

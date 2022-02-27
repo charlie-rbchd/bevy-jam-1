@@ -9,6 +9,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugin(LdtkPlugin)
         .insert_resource(LevelSelection::Uid(0))
+        .insert_resource(components::TileMap::default())
         .insert_resource(LdtkSettings {
             load_level_neighbors: true,
             use_level_world_translations: true,
@@ -16,6 +17,7 @@ fn main() {
         })
         .add_startup_system(systems::setup)
         .add_system(systems::camera_fit_inside_current_level)
+        .add_system(systems::generate_collision_map)
         .add_system(systems::movement)
         .register_ldtk_int_cell::<components::WallBundle>(1)
         .register_ldtk_int_cell::<components::LadderBundle>(2)

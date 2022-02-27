@@ -13,10 +13,27 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
 }
 
-const TILE_SIZE: u8 = 64;
+const TILE_SIZE: u32 = 64;
+
+fn get_nearest_tile_on_grid(x: f32, y: f32) -> (u32, u32) {
+    ((x as u32 / TILE_SIZE), (y as u32 / TILE_SIZE))
+}
+
+pub fn generate_collision_map(
+    mut tile_map: ResMut<TileMap>,
+    wall_query: Query<&Transform, Added<Wall>>,
+) {
+    for wall_transform in wall_query.iter() {
+        tile_map.0.insert(
+            get_nearest_tile_on_grid(wall_transform.translation.x, wall_transform.translation.y),
+            TileType::Wall,
+        );
+    }
+}
 
 pub fn movement(
     input: Res<Input<KeyCode>>,
+    tile_map: Res<TileMap>,
     mut player_query: Query<(&Speed, &mut Transform), With<Player>>,
 ) {
     if let Ok((speed, mut transform)) = player_query.get_single_mut() {
@@ -27,8 +44,24 @@ pub fn movement(
         if input.just_pressed(KeyCode::D) || input.just_pressed(KeyCode::Right) {
             direction += 1.0;
         }
-        let dx: f32 = TILE_SIZE as f32 * direction * speed.0;
-        transform.translation.x += dx;
+        let current_position = &transform.translation;
+        let mut new_position = current_position.clone();
+        new_position.x += TILE_SIZE as f32 * direction * speed.0;
+
+        let mut new_position_is_valid = true;
+        if let Some(_wall) = tile_map
+            .0
+            .get(&get_nearest_tile_on_grid(new_position.x, new_position.y))
+        {
+            // invalid position: colliding with a wall
+            new_position_is_valid = false;
+        }
+
+        // TODO: check for collisions with the edge of the level
+
+        if new_position_is_valid {
+            transform.translation = new_position;
+        }
     }
 }
 
