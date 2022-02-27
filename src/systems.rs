@@ -94,6 +94,36 @@ pub fn movement(
     }
 }
 
+pub fn gravity(
+    tile_map: Res<TileMap>,
+    mut player_query: Query<(&Speed, &mut Transform), With<Player>>,
+) {
+    if let Ok((speed, mut transform)) = player_query.get_single_mut() {
+        let mut is_falling = false;
+
+        let current_position = &transform.translation;
+        let mut tile_under_player =
+            get_nearest_tile_on_grid(current_position.x, current_position.y);
+        tile_under_player.1 -= 1;
+
+        match tile_map.0.get(&tile_under_player) {
+            Some(_) => {}
+            None => {
+                is_falling = true;
+            }
+        }
+
+        if is_falling {
+            let mut new_position = current_position.clone();
+            new_position.y -= TILE_SIZE as f32 * speed.0;
+
+            // TODO: trigger death when player reaches the edge of the level
+
+            transform.translation = new_position;
+        }
+    }
+}
+
 pub fn run_if_player_moved(turn_state: Res<TurnState>) -> ShouldRun {
     if turn_state.player_just_took_turn {
         ShouldRun::Yes
