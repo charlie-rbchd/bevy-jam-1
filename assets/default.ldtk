@@ -338,7 +338,13 @@
 							"fieldInstances": [
 								{ "__identifier": "Speed", "__value": 0, "__type": "Float", "defUid": 21, "realEditorValues": [] },
 								{ "__identifier": "Health", "__value": 100, "__type": "Int", "defUid": 22, "realEditorValues": [] },
-								{ "__identifier": "Damage", "__value": 0, "__type": "Int", "defUid": 23, "realEditorValues": [] },
+								{
+									"__identifier": "Damage",
+									"__value": 10,
+									"__type": "Int",
+									"defUid": 23,
+									"realEditorValues": [{ "id": "V_Int", "params": [10] }]
+								},
 								{
 									"__identifier": "Type",
 									"__value": "ObstacleType0",

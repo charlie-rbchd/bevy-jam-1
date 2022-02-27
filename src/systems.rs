@@ -144,8 +144,36 @@ pub fn run_if_player_moved(turn_state: Res<TurnState>) -> ShouldRun {
     }
 }
 
-pub fn update_world() {
+fn entities_are_overlapping(t1: &Transform, t2: &Transform) -> bool {
+    let t1_on_grid = get_nearest_tile_on_grid(t1.translation.x, t1.translation.y);
+    let t2_on_grid = get_nearest_tile_on_grid(t2.translation.x, t2.translation.y);
+    t1_on_grid.0 == t2_on_grid.0 && t1_on_grid.1 == t2_on_grid.1
+}
+
+pub fn update_world(
+    mut player_query: Query<(&mut Health, &Damage, &Transform), With<Player>>,
+    mut obstacle_query: Query<(&mut Health, &Damage, &Transform), Without<Player>>,
+) {
     println!("update_world");
+
+    if let Ok((mut player_health, player_damage, player_transform)) = player_query.get_single_mut()
+    {
+        for (mut obstacle_health, obstacle_damage, obstacle_transform) in obstacle_query.iter_mut()
+        {
+            if entities_are_overlapping(player_transform, obstacle_transform) {
+                if player_damage.0 > 0 && obstacle_health.0 > 0 {
+                    obstacle_health.0 -= player_damage.0;
+                    println!("player dealt {} damage to an obstacle", player_damage.0);
+                }
+                if obstacle_damage.0 > 0 && player_health.0 > 0 {
+                    player_health.0 -= obstacle_damage.0;
+                    println!("obstacle dealt {} damage to the player", obstacle_damage.0);
+                }
+
+                // todo: check if either the player or the obstacle is dead and trigger the necessary conditions
+            }
+        }
+    }
 }
 
 const ASPECT_RATIO: f32 = 16.0 / 9.0;
