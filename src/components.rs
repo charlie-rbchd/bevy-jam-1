@@ -14,6 +14,7 @@ pub struct TileMap(pub HashMap<(i32, i32), TileType>);
 
 pub struct TurnState {
     pub player_just_took_turn: bool,
+    pub player_is_falling: bool,
 }
 
 #[derive(Clone, Component)]

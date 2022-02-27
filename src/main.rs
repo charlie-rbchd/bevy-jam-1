@@ -18,6 +18,7 @@ fn main() {
         .insert_resource(components::TileMap::default())
         .insert_resource(components::TurnState {
             player_just_took_turn: false,
+            player_is_falling: false,
         })
         .insert_resource(LdtkSettings {
             load_level_neighbors: true,

@@ -76,7 +76,11 @@ pub fn movement(
         new_position.x += TILE_SIZE as f32 * direction.0 * speed.0;
         new_position.y += TILE_SIZE as f32 * direction.1 * speed.0;
 
-        let mut new_position_is_valid = (true, new_position.y == current_position.y);
+        let going_down_while_falling = direction.1 < 0. && turn_state.player_is_falling;
+        let mut new_position_is_valid = (
+            true,
+            new_position.y == current_position.y || going_down_while_falling,
+        );
         if let Some(tile) = tile_map
             .0
             .get(&get_nearest_tile_on_grid(new_position.x, new_position.y))
@@ -104,24 +108,21 @@ pub fn movement(
 
 pub fn gravity(
     tile_map: Res<TileMap>,
+    mut turn_state: ResMut<TurnState>,
     mut player_query: Query<(&Speed, &mut Transform), With<Player>>,
 ) {
     if let Ok((speed, mut transform)) = player_query.get_single_mut() {
-        let mut is_falling = false;
-
         let current_position = &transform.translation;
         let mut tile_under_player =
             get_nearest_tile_on_grid(current_position.x, current_position.y);
         tile_under_player.1 -= 1;
 
-        match tile_map.0.get(&tile_under_player) {
-            Some(_) => {}
-            None => {
-                is_falling = true;
-            }
-        }
+        turn_state.player_is_falling = match tile_map.0.get(&tile_under_player) {
+            Some(_) => false,
+            None => true,
+        };
 
-        if is_falling {
+        if turn_state.player_is_falling {
             let mut new_position = current_position.clone();
             new_position.y -= TILE_SIZE as f32 * speed.0;
 
