@@ -22,11 +22,21 @@ fn get_nearest_tile_on_grid(x: f32, y: f32) -> (u32, u32) {
 pub fn generate_collision_map(
     mut tile_map: ResMut<TileMap>,
     wall_query: Query<&Transform, Added<Wall>>,
+    climbable_query: Query<&Transform, Added<Climbable>>,
 ) {
     for wall_transform in wall_query.iter() {
         tile_map.0.insert(
             get_nearest_tile_on_grid(wall_transform.translation.x, wall_transform.translation.y),
             TileType::Wall,
+        );
+    }
+    for climbable_transform in climbable_query.iter() {
+        tile_map.0.insert(
+            get_nearest_tile_on_grid(
+                climbable_transform.translation.x,
+                climbable_transform.translation.y,
+            ),
+            TileType::Ladder,
         );
     }
 }
@@ -37,29 +47,43 @@ pub fn movement(
     mut player_query: Query<(&Speed, &mut Transform), With<Player>>,
 ) {
     if let Ok((speed, mut transform)) = player_query.get_single_mut() {
-        let mut direction = 0.0;
+        let mut direction = (0.0, 0.0);
         if input.just_pressed(KeyCode::A) || input.just_pressed(KeyCode::Left) {
-            direction -= 1.0;
+            direction.0 -= 1.0;
         }
         if input.just_pressed(KeyCode::D) || input.just_pressed(KeyCode::Right) {
-            direction += 1.0;
+            direction.0 += 1.0;
         }
+        if input.just_pressed(KeyCode::W) || input.just_pressed(KeyCode::Up) {
+            direction.1 += 1.0;
+        }
+        if input.just_pressed(KeyCode::S) || input.just_pressed(KeyCode::Down) {
+            direction.1 -= 1.0;
+        }
+
         let current_position = &transform.translation;
         let mut new_position = current_position.clone();
-        new_position.x += TILE_SIZE as f32 * direction * speed.0;
+        new_position.x += TILE_SIZE as f32 * direction.0 * speed.0;
+        new_position.y += TILE_SIZE as f32 * direction.1 * speed.0;
 
-        let mut new_position_is_valid = true;
-        if let Some(_wall) = tile_map
+        let mut new_position_is_valid = (true, new_position.y == current_position.y);
+        if let Some(tile) = tile_map
             .0
             .get(&get_nearest_tile_on_grid(new_position.x, new_position.y))
         {
-            // invalid position: colliding with a wall
-            new_position_is_valid = false;
+            match tile {
+                TileType::Wall => {
+                    new_position_is_valid.0 = false;
+                }
+                TileType::Ladder => {
+                    new_position_is_valid.1 = true;
+                }
+            }
         }
 
         // TODO: check for collisions with the edge of the level
 
-        if new_position_is_valid {
+        if new_position_is_valid.0 && new_position_is_valid.1 {
             transform.translation = new_position;
         }
     }
