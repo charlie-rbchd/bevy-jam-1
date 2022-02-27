@@ -31,8 +31,9 @@ fn main() {
         })
         // .insert_resource(ReportExecutionOrderAmbiguities)
         .add_state(components::AppState::MainMenu)
-        .register_ldtk_int_cell::<components::WallBundle>(1)
-        .register_ldtk_int_cell::<components::LadderBundle>(2)
+        .register_ldtk_int_cell::<components::WallTileBundle>(1)
+        .register_ldtk_int_cell::<components::ClimableTileBundle>(2)
+        .register_ldtk_int_cell::<components::FallingIceTileBundle>(3)
         .register_ldtk_entity::<components::PlayerBundle>("Player")
         .register_ldtk_entity::<components::ObstacleBundle>("Obstacle")
         .add_startup_system(systems::setup)
@@ -59,7 +60,8 @@ fn main() {
                 .label(SystemOrder::WorldTick)
                 .after(SystemOrder::InputHandling)
                 .with_run_criteria(systems::run_if_player_moved)
-                .with_system(systems::update_world),
+                .with_system(systems::update_world)
+                .with_system(systems::update_falling_ice),
         )
         .add_system_set(
             SystemSet::on_exit(components::AppState::InGame)

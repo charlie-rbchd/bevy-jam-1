@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 26,
+	"nextUid": 29,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -60,9 +60,37 @@
 			"pxOffsetY": 0,
 			"requiredTags": [],
 			"excludedTags": [],
-			"intGridValues": [ { "value": 1, "identifier": "Wall", "color": "#000000" }, { "value": 2, "identifier": "Ladder", "color": "#FF0000" } ],
+			"intGridValues": [
+				{ "value": 1, "identifier": "Wall", "color": "#000000" },
+				{ "value": 2, "identifier": "Ladder", "color": "#FF0000" },
+				{ "value": 3, "identifier": "FallingIce", "color": "#00EAFF" }
+			],
 			"autoTilesetDefUid": 4,
 			"autoRuleGroups": [
+				{ "uid": 27, "name": "FallingIce", "active": true, "collapsed": false, "isOptional": false, "rules": [
+					{
+						"uid": 28,
+						"active": true,
+						"size": 1,
+						"tileIds": [1],
+						"chance": 1,
+						"breakOnMatch": true,
+						"pattern": [3],
+						"flipX": false,
+						"flipY": false,
+						"xModulo": 1,
+						"yModulo": 1,
+						"checker": "None",
+						"tileMode": "Stamp",
+						"pivotX": 0.5,
+						"pivotY": 0.5,
+						"outOfBoundsValue": null,
+						"perlinActive": false,
+						"perlinSeed": 7350447,
+						"perlinScale": 0.2,
+						"perlinOctaves": 2
+					}
+				] },
 				{ "uid": 18, "name": "Ladder", "active": true, "collapsed": false, "isOptional": false, "rules": [
 					{
 						"uid": 19,
@@ -248,6 +276,31 @@
 					"textLanguageMode": null
 				}
 			]
+		},
+		{
+			"identifier": "FallingIce",
+			"uid": 26,
+			"tags": [],
+			"width": 64,
+			"height": 64,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#5EE0F1",
+			"renderMode": "Rectangle",
+			"showName": true,
+			"tilesetId": null,
+			"tileId": null,
+			"tileRenderMode": "FitInside",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": []
 		}
 	], "tilesets": [
 		{
@@ -406,6 +459,28 @@
 									}]
 								}
 							]
+						},
+						{
+							"__identifier": "FallingIce",
+							"__grid": [7,8],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 64,
+							"height": 64,
+							"defUid": 26,
+							"px": [448,512],
+							"fieldInstances": []
+						},
+						{
+							"__identifier": "FallingIce",
+							"__grid": [7,4],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 64,
+							"height": 64,
+							"defUid": 26,
+							"px": [448,256],
+							"fieldInstances": []
 						}
 					]
 				},
@@ -436,6 +511,7 @@
 						{ "coordId": 54, "v": 1 },
 						{ "coordId": 55, "v": 0 },
 						{ "coordId": 70, "v": 1 },
+						{ "coordId": 71, "v": 2 },
 						{ "coordId": 86, "v": 1 },
 						{ "coordId": 102, "v": 1 },
 						{ "coordId": 104, "v": 1 },
@@ -444,6 +520,7 @@
 						{ "coordId": 119, "v": 0 },
 						{ "coordId": 120, "v": 1 },
 						{ "coordId": 121, "v": 0 },
+						{ "coordId": 135, "v": 2 },
 						{ "coordId": 136, "v": 1 },
 						{ "coordId": 151, "v": 1 },
 						{ "coordId": 152, "v": 1 },
@@ -481,8 +558,8 @@
 					"intGridCsv": [
 						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 						0,0,0,2,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-						2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,2,
-						0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,
+						2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,2,
+						0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,3,2,0,0,0,
 						0,0,0,0,0,0,0,0,0,0,0,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,1,1,1,0,0,0,
 						0,0,0,1,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,1,0,2,0,0,2,0,0,0,0,0,0,0,0,0,0,
 						1,1,2,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,
@@ -538,7 +615,9 @@
 						{ "px": [256,768], "src": [0,128], "f": 0, "t": 6, "d": [19,196] },
 						{ "px": [448,768], "src": [0,128], "f": 0, "t": 6, "d": [19,199] },
 						{ "px": [256,832], "src": [0,128], "f": 0, "t": 6, "d": [19,212] },
-						{ "px": [256,896], "src": [0,128], "f": 0, "t": 6, "d": [19,228] }
+						{ "px": [256,896], "src": [0,128], "f": 0, "t": 6, "d": [19,228] },
+						{ "px": [448,256], "src": [64,0], "f": 0, "t": 1, "d": [28,71] },
+						{ "px": [448,512], "src": [64,0], "f": 0, "t": 1, "d": [28,135] }
 					],
 					"seed": 3227972,
 					"overrideTilesetUid": null,
