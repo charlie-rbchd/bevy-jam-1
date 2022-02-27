@@ -102,6 +102,9 @@ pub fn movement(
         {
             transform.translation = new_position;
             turn_state.player_just_took_turn = true;
+
+            // Apply gravity
+            gravity(tile_map, player_query)
         }
     }
 }
