@@ -28,7 +28,7 @@ fn main() {
             use_level_world_translations: true,
             ..Default::default()
         })
-        .insert_resource(ReportExecutionOrderAmbiguities)
+        // .insert_resource(ReportExecutionOrderAmbiguities)
         .register_ldtk_int_cell::<components::WallBundle>(1)
         .register_ldtk_int_cell::<components::LadderBundle>(2)
         .register_ldtk_entity::<components::PlayerBundle>("Player")
