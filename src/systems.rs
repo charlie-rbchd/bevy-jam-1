@@ -17,11 +17,8 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         .spawn_bundle(ButtonBundle {
             style: Style {
                 size: Size::new(Val::Px(250.0), Val::Px(65.0)),
-                // center button
                 margin: Rect::all(Val::Auto),
-                // horizontally center child text
                 justify_content: JustifyContent::Center,
-                // vertically center child text
                 align_items: AlignItems::Center,
                 ..Default::default()
             },
@@ -44,7 +41,7 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         });
 }
 
-pub fn setup_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn setup_menu(mut commands: Commands) {
     commands.spawn_bundle(UiCameraBundle::default());
 }
 
@@ -80,7 +77,7 @@ pub fn handle_ui_buttons(
 const TILE_SIZE: i32 = 64;
 const WORLD_SIZE: i32 = 16;
 
-pub fn setup_world(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn setup_world(mut commands: Commands) {
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 }
 
@@ -100,7 +97,6 @@ fn is_position_in_bounds(x_or_y: f32) -> bool {
 }
 
 pub fn generate_collision_map(
-    // mut commands: Commands,
     mut tile_map: ResMut<TileMap>,
     wall_query: Query<&Transform, Added<WallTile>>,
     climbable_query: Query<&Transform, Added<ClimbableTile>>,
