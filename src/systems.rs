@@ -104,7 +104,7 @@ pub fn movement(
             turn_state.player_just_took_turn = true;
 
             // Apply gravity
-            gravity(tile_map, player_query)
+            gravity(tile_map, turn_state, player_query)
         }
     }
 }
