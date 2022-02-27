@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 20,
+	"nextUid": 26,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -141,11 +141,36 @@
 			"limitBehavior": "MoveLastOne",
 			"pivotX": 0,
 			"pivotY": 0,
+			"fieldDefs": []
+		},
+		{
+			"identifier": "Obstacle",
+			"uid": 20,
+			"tags": [],
+			"width": 64,
+			"height": 64,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#94D9B3",
+			"renderMode": "Rectangle",
+			"showName": true,
+			"tilesetId": null,
+			"tileId": null,
+			"tileRenderMode": "Stretch",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
 			"fieldDefs": [
 				{
 					"identifier": "Speed",
 					"__type": "Float",
-					"uid": 6,
+					"uid": 21,
 					"type": "F_Float",
 					"isArray": false,
 					"canBeNull": false,
@@ -159,13 +184,13 @@
 					"max": 2,
 					"regex": null,
 					"acceptFileTypes": null,
-					"defaultOverride": { "id": "V_Float", "params": [1] },
+					"defaultOverride": { "id": "V_Float", "params": [0] },
 					"textLanguageMode": null
 				},
 				{
 					"identifier": "Health",
 					"__type": "Int",
-					"uid": 7,
+					"uid": 22,
 					"type": "F_Int",
 					"isArray": false,
 					"canBeNull": false,
@@ -185,7 +210,7 @@
 				{
 					"identifier": "Damage",
 					"__type": "Int",
-					"uid": 8,
+					"uid": 23,
 					"type": "F_Int",
 					"isArray": false,
 					"canBeNull": false,
@@ -200,6 +225,26 @@
 					"regex": null,
 					"acceptFileTypes": null,
 					"defaultOverride": { "id": "V_Int", "params": [0] },
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "Type",
+					"__type": "LocalEnum.ObstacleType",
+					"uid": 25,
+					"type": { "id": "F_Enum", "params": [24] },
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
 					"textLanguageMode": null
 				}
 			]
@@ -222,7 +267,11 @@
 			"savedSelections": [],
 			"cachedPixelData": { "opaqueTiles": "111111110", "averageColors": "f748f6cdf878f633f223fffff000fa330000" }
 		}
-	], "enums": [], "externalEnums": [], "levelFields": [] },
+	], "enums": [{ "identifier": "ObstacleType", "uid": 24, "values": [
+		{ "id": "ObstacleType0", "tileId": 1, "color": 6278371, "__tileSrcRect": [64,0,64,64] },
+		{ "id": "ObstacleType1", "tileId": 4, "color": 2236212, "__tileSrcRect": [64,64,64,64] },
+		{ "id": "ObstacleType2", "tileId": 5, "color": 16777215, "__tileSrcRect": [128,64,64,64] }
+	], "iconTilesetUid": 4, "externalRelPath": null, "externalFileChecksum": null }], "externalEnums": [], "levelFields": [] },
 	"levels": [
 		{
 			"identifier": "Level_0",
@@ -275,10 +324,81 @@
 							"height": 64,
 							"defUid": 5,
 							"px": [320,768],
+							"fieldInstances": []
+						},
+						{
+							"__identifier": "Obstacle",
+							"__grid": [10,9],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 64,
+							"height": 64,
+							"defUid": 20,
+							"px": [640,576],
 							"fieldInstances": [
-								{ "__identifier": "Speed", "__value": 1, "__type": "Float", "defUid": 6, "realEditorValues": [] },
-								{ "__identifier": "Health", "__value": 100, "__type": "Int", "defUid": 7, "realEditorValues": [] },
-								{ "__identifier": "Damage", "__value": 0, "__type": "Int", "defUid": 8, "realEditorValues": [] }
+								{ "__identifier": "Speed", "__value": 0, "__type": "Float", "defUid": 21, "realEditorValues": [] },
+								{ "__identifier": "Health", "__value": 100, "__type": "Int", "defUid": 22, "realEditorValues": [] },
+								{ "__identifier": "Damage", "__value": 0, "__type": "Int", "defUid": 23, "realEditorValues": [] },
+								{
+									"__identifier": "Type",
+									"__value": "ObstacleType0",
+									"__type": "LocalEnum.ObstacleType",
+									"defUid": 25,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["ObstacleType0"]
+									}]
+								}
+							]
+						},
+						{
+							"__identifier": "Obstacle",
+							"__grid": [2,2],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 64,
+							"height": 64,
+							"defUid": 20,
+							"px": [128,128],
+							"fieldInstances": [
+								{ "__identifier": "Speed", "__value": 0, "__type": "Float", "defUid": 21, "realEditorValues": [] },
+								{ "__identifier": "Health", "__value": 100, "__type": "Int", "defUid": 22, "realEditorValues": [] },
+								{ "__identifier": "Damage", "__value": 0, "__type": "Int", "defUid": 23, "realEditorValues": [] },
+								{
+									"__identifier": "Type",
+									"__value": "ObstacleType1",
+									"__type": "LocalEnum.ObstacleType",
+									"defUid": 25,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["ObstacleType1"]
+									}]
+								}
+							]
+						},
+						{
+							"__identifier": "Obstacle",
+							"__grid": [12,14],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 64,
+							"height": 64,
+							"defUid": 20,
+							"px": [768,896],
+							"fieldInstances": [
+								{ "__identifier": "Speed", "__value": 0, "__type": "Float", "defUid": 21, "realEditorValues": [] },
+								{ "__identifier": "Health", "__value": 100, "__type": "Int", "defUid": 22, "realEditorValues": [] },
+								{ "__identifier": "Damage", "__value": 0, "__type": "Int", "defUid": 23, "realEditorValues": [] },
+								{
+									"__identifier": "Type",
+									"__value": "ObstacleType2",
+									"__type": "LocalEnum.ObstacleType",
+									"defUid": 25,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["ObstacleType2"]
+									}]
+								}
 							]
 						}
 					]
