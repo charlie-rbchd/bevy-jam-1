@@ -7,7 +7,7 @@ use std::string::String;
 pub enum TileType {
     Wall,
     Ladder,
-    FallingIce
+    FallingIce,
 }
 
 #[derive(Default)]
@@ -21,11 +21,12 @@ pub enum AppState {
 
 pub struct TurnState {
     pub player_just_took_turn: bool,
+    pub player_num_actions_taken: u32,
     pub player_is_falling: bool,
 }
 
 #[derive(Clone, Component)]
-pub struct Speed(pub f32);
+pub struct Speed(pub u8);
 
 #[derive(Clone, Component)]
 pub struct Damage(pub i32);
@@ -63,7 +64,7 @@ impl LdtkEntity for PlayerBundle {
                 ..Default::default()
             },
             player: Player::default(),
-            speed: Speed(1.0),
+            speed: Speed(1),
             damage: Damage(0),
             health: Health(100),
         }
@@ -92,14 +93,14 @@ impl LdtkEntity for ObstacleBundle {
         asset_server: &AssetServer,
         _: &mut Assets<TextureAtlas>,
     ) -> Self {
-        let mut speed = Speed(1.0);
+        let mut speed = Speed(1);
         if let Some(speed_field) = entity_instance
             .field_instances
             .iter()
             .find(|f| f.identifier == "Speed".to_string())
         {
-            if let FieldValue::Float(Some(speed_value)) = speed_field.value {
-                speed = Speed(speed_value);
+            if let FieldValue::Int(Some(speed_value)) = speed_field.value {
+                speed = Speed(speed_value as u8);
             }
         }
 

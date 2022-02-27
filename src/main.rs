@@ -22,6 +22,7 @@ fn main() {
         .insert_resource(components::TileMap::default())
         .insert_resource(components::TurnState {
             player_just_took_turn: false,
+            player_num_actions_taken: 0,
             player_is_falling: false,
         })
         .insert_resource(LdtkSettings {
@@ -59,7 +60,7 @@ fn main() {
             SystemSet::on_update(components::AppState::InGame)
                 .label(SystemOrder::WorldTick)
                 .after(SystemOrder::InputHandling)
-                .with_run_criteria(systems::run_if_player_moved)
+                .with_run_criteria(systems::run_if_player_turn_over)
                 .with_system(systems::update_world)
                 .with_system(systems::update_falling_ice),
         )

@@ -109,7 +109,7 @@ pub fn handle_ui_buttons(
                     SPEED_BUTTON_LABEL => {
                         println!("player chose speed");
                         let (mut speed, _, _) = player_query.single_mut();
-                        speed.0 = 2.0;
+                        speed.0 = 2;
                     }
                     STRENGTH_BUTTON_LABEL => {
                         println!("player chose strength");
@@ -198,7 +198,7 @@ pub fn movement(
 ) {
     turn_state.player_just_took_turn = false;
 
-    if let Ok((speed, mut transform)) = player_query.get_single_mut() {
+    if let Ok((player_speed, mut player_transform)) = player_query.get_single_mut() {
         let mut direction = (0.0, 0.0);
         if input.just_pressed(KeyCode::A) || input.just_pressed(KeyCode::Left) {
             direction.0 -= 1.0;
@@ -213,10 +213,10 @@ pub fn movement(
             direction.1 -= 1.0;
         }
 
-        let current_position = &transform.translation;
+        let current_position = &player_transform.translation;
         let mut new_position = current_position.clone();
-        new_position.x += TILE_SIZE as f32 * direction.0 * speed.0;
-        new_position.y += TILE_SIZE as f32 * direction.1 * speed.0;
+        new_position.x += TILE_SIZE as f32 * direction.0;
+        new_position.y += TILE_SIZE as f32 * direction.1;
 
         let going_down_while_falling = direction.1 < 0. && turn_state.player_is_falling;
         let mut new_position_is_valid = (
@@ -242,43 +242,44 @@ pub fn movement(
             && new_position_is_valid.0
             && new_position_is_valid.1
         {
-            transform.translation = new_position;
-            turn_state.player_just_took_turn = true;
+            player_transform.translation = new_position;
+
+            turn_state.player_num_actions_taken += 1;
+            if turn_state.player_num_actions_taken % player_speed.0 as u32 == 0 {
+                turn_state.player_just_took_turn = true;
+            }
 
             // Apply gravity
-            gravity(tile_map, turn_state, player_query)
+            apply_gravity(tile_map, turn_state, &mut player_transform)
         }
     }
 }
 
-pub fn gravity(
+pub fn apply_gravity(
     tile_map: Res<TileMap>,
     mut turn_state: ResMut<TurnState>,
-    mut player_query: Query<(&Speed, &mut Transform), With<Player>>,
+    mut player_transform: &mut Transform,
 ) {
-    if let Ok((speed, mut transform)) = player_query.get_single_mut() {
-        let current_position = &transform.translation;
-        let mut tile_under_player =
-            get_nearest_tile_on_grid(current_position.x, current_position.y);
-        tile_under_player.1 -= 1;
+    let current_position = &player_transform.translation;
+    let mut tile_under_player = get_nearest_tile_on_grid(current_position.x, current_position.y);
+    tile_under_player.1 -= 1;
 
-        turn_state.player_is_falling = match tile_map.0.get(&tile_under_player) {
-            Some(_) => false,
-            None => true,
-        };
+    turn_state.player_is_falling = match tile_map.0.get(&tile_under_player) {
+        Some(_) => false,
+        None => true,
+    };
 
-        if turn_state.player_is_falling {
-            let mut new_position = current_position.clone();
-            new_position.y -= TILE_SIZE as f32 * speed.0;
+    if turn_state.player_is_falling {
+        let mut new_position = current_position.clone();
+        new_position.y -= TILE_SIZE as f32;
 
-            // TODO: trigger death when player reaches the edge of the level
+        // TODO: trigger death when player reaches the edge of the level
 
-            transform.translation = new_position;
-        }
+        player_transform.translation = new_position;
     }
 }
 
-pub fn run_if_player_moved(turn_state: Res<TurnState>) -> ShouldRun {
+pub fn run_if_player_turn_over(turn_state: Res<TurnState>) -> ShouldRun {
     if turn_state.player_just_took_turn {
         ShouldRun::Yes
     } else {

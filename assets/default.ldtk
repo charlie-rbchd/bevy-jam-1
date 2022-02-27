@@ -197,9 +197,9 @@
 			"fieldDefs": [
 				{
 					"identifier": "Speed",
-					"__type": "Float",
+					"__type": "Int",
 					"uid": 21,
-					"type": "F_Float",
+					"type": "F_Int",
 					"isArray": false,
 					"canBeNull": false,
 					"arrayMinLength": null,
@@ -389,7 +389,13 @@
 							"defUid": 20,
 							"px": [640,576],
 							"fieldInstances": [
-								{ "__identifier": "Speed", "__value": 0, "__type": "Float", "defUid": 21, "realEditorValues": [] },
+								{
+									"__identifier": "Speed",
+									"__value": null,
+									"__type": "Int",
+									"defUid": 21,
+									"realEditorValues": [null]
+								},
 								{ "__identifier": "Health", "__value": 100, "__type": "Int", "defUid": 22, "realEditorValues": [] },
 								{
 									"__identifier": "Damage",
@@ -420,7 +426,13 @@
 							"defUid": 20,
 							"px": [128,128],
 							"fieldInstances": [
-								{ "__identifier": "Speed", "__value": 0, "__type": "Float", "defUid": 21, "realEditorValues": [] },
+								{
+									"__identifier": "Speed",
+									"__value": null,
+									"__type": "Int",
+									"defUid": 21,
+									"realEditorValues": [null]
+								},
 								{ "__identifier": "Health", "__value": 100, "__type": "Int", "defUid": 22, "realEditorValues": [] },
 								{ "__identifier": "Damage", "__value": 0, "__type": "Int", "defUid": 23, "realEditorValues": [] },
 								{
@@ -445,7 +457,13 @@
 							"defUid": 20,
 							"px": [768,896],
 							"fieldInstances": [
-								{ "__identifier": "Speed", "__value": 0, "__type": "Float", "defUid": 21, "realEditorValues": [] },
+								{
+									"__identifier": "Speed",
+									"__value": null,
+									"__type": "Int",
+									"defUid": 21,
+									"realEditorValues": [null]
+								},
 								{ "__identifier": "Health", "__value": 100, "__type": "Int", "defUid": 22, "realEditorValues": [] },
 								{ "__identifier": "Damage", "__value": 0, "__type": "Int", "defUid": 23, "realEditorValues": [] },
 								{
