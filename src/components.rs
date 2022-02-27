@@ -10,7 +10,7 @@ pub enum TileType {
 }
 
 #[derive(Default)]
-pub struct TileMap(pub HashMap<(u32, u32), TileType>);
+pub struct TileMap(pub HashMap<(i32, i32), TileType>);
 
 pub struct TurnState {
     pub player_just_took_turn: bool,

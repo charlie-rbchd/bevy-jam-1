@@ -14,10 +14,16 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
 }
 
-const TILE_SIZE: u32 = 64;
+const TILE_SIZE: i32 = 64;
+const WORLD_SIZE: i32 = 16;
 
-fn get_nearest_tile_on_grid(x: f32, y: f32) -> (u32, u32) {
-    ((x as u32 / TILE_SIZE), (y as u32 / TILE_SIZE))
+fn get_nearest_tile_on_grid(x: f32, y: f32) -> (i32, i32) {
+    ((x as i32 / TILE_SIZE), (y as i32 / TILE_SIZE))
+}
+
+fn is_position_in_bounds(x_or_y: f32) -> bool {
+    let world_size_pixels = TILE_SIZE as f32 * WORLD_SIZE as f32;
+    x_or_y < world_size_pixels && x_or_y > 0.
 }
 
 pub fn generate_collision_map(
@@ -85,9 +91,11 @@ pub fn movement(
             }
         }
 
-        // TODO: check for collisions with the edge of the level
-
-        if new_position != *current_position && new_position_is_valid.0 && new_position_is_valid.1 {
+        if is_position_in_bounds(new_position.x)
+            && new_position != *current_position
+            && new_position_is_valid.0
+            && new_position_is_valid.1
+        {
             transform.translation = new_position;
             turn_state.player_just_took_turn = true;
         }
