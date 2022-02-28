@@ -172,12 +172,8 @@ fn is_position_in_bounds(x_or_y: f32) -> bool {
 // Return top-left
 fn tile_pos_to_sprite_pos(x: i32, y: i32) -> Vec3 {
     let size = TILE_SIZE as f32;
-    let half = size / 2.0f32;
-    Vec3::new(
-        (x - 2) as f32 * size - half,
-        (y + 1) as f32 * size - half,
-        1.0f32,
-    )
+    let half = size / 2.;
+    Vec3::new(x as f32 * size + half, y as f32 * size + half, 1.)
 }
 
 pub fn generate_collision_map(

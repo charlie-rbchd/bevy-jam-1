@@ -21,11 +21,6 @@ fn main() {
         .insert_resource(LevelSelection::Uid(0))
         .insert_resource(components::TileMap::default())
         .insert_resource(components::GameState::default())
-        .insert_resource(LdtkSettings {
-            load_level_neighbors: true,
-            use_level_world_translations: true,
-            ..Default::default()
-        })
         // .insert_resource(ReportExecutionOrderAmbiguities)
         .add_state(components::AppState::MainMenu)
         .register_ldtk_int_cell::<components::WallTileBundle>(1)
