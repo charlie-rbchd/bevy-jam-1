@@ -45,12 +45,12 @@
       "type": "cppvsdbg",
       "request": "launch",
       "name": "(Windows) Debug executable 'bevy-jam-1'",
+      "preLaunchTask": "rust: copy assets for debugging",
       "program": "${workspaceRoot}/target/debug/bevy-jam-1.exe",
       "args": [],
       "cwd": "${workspaceFolder}",
       "stopAtEntry": false,
       "environment": [],
-      "console": "externalTerminal"
     }
   ]
 }

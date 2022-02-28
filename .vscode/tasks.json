@@ -1,13 +1,38 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "cargo",
-			"command": "run",
-			"problemMatcher": [
-				"$rustc"
-			],
-			"label": "rust: cargo run"
-		}
-	]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "cargo",
+      "command": "run",
+      "problemMatcher": [
+        "$rustc"
+      ],
+      "label": "rust: cargo run"
+    },
+    {
+      "type": "cargo",
+      "command": "build",
+      "problemMatcher": [
+        "$rustc"
+      ],
+      "label": "rust: cargo build"
+    },
+    {
+      "type": "shell",
+      "windows": {
+        "command": "xcopy",
+        "args": [
+          "${workspaceFolder}\\assets",
+          "${workspaceFolder}\\target\\debug\\assets",
+          "/q",
+          "/s",
+          "/y",
+          "/i"
+        ]
+      },
+      "problemMatcher": [],
+      "label": "rust: copy assets for debugging",
+      "dependsOn": ["rust: cargo build"]
+    }
+  ]
 }
