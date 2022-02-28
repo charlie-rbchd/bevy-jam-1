@@ -19,10 +19,28 @@ pub enum AppState {
     InGame,
 }
 
-pub struct TurnState {
+pub enum Advantage {
+    Speed,
+    Strength,
+    Health,
+}
+
+pub struct GameState {
     pub player_just_took_turn: bool,
     pub player_num_actions_taken: u32,
     pub player_is_falling: bool,
+    pub player_advantage: Option<Advantage>,
+}
+
+impl Default for GameState {
+    fn default() -> Self {
+        Self {
+            player_just_took_turn: false,
+            player_num_actions_taken: 0,
+            player_is_falling: false,
+            player_advantage: None,
+        }
+    }
 }
 
 #[derive(Clone, Component)]

@@ -20,11 +20,7 @@ fn main() {
         .add_plugin(LdtkPlugin)
         .insert_resource(LevelSelection::Uid(0))
         .insert_resource(components::TileMap::default())
-        .insert_resource(components::TurnState {
-            player_just_took_turn: false,
-            player_num_actions_taken: 0,
-            player_is_falling: false,
-        })
+        .insert_resource(components::GameState::default())
         .insert_resource(LdtkSettings {
             load_level_neighbors: true,
             use_level_world_translations: true,

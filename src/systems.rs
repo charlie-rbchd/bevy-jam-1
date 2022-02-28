@@ -94,8 +94,8 @@ pub fn handle_ui_buttons(
         (Changed<Interaction>, With<Button>),
     >,
     mut app_state: ResMut<State<AppState>>,
+    mut game_state: ResMut<GameState>,
     mut text_query: Query<&mut Text>,
-    // mut player_query: Query<(&mut Speed, &mut Damage, &mut Health), With<Player>>,
 ) {
     for (interaction, mut color, children) in interaction_query.iter_mut() {
         let text = text_query.get_mut(children[0]).unwrap();
@@ -104,19 +104,15 @@ pub fn handle_ui_buttons(
                 match text.sections[0].value.as_str() {
                     SPEED_BUTTON_LABEL => {
                         println!("player chose speed");
-                        // FIXME: save this somewhere are apply during setup_world
-                        // let (mut speed, _, _) = player_query.single_mut();
-                        // speed.0 = 2;
+                        game_state.player_advantage = Some(Advantage::Speed);
                     }
                     STRENGTH_BUTTON_LABEL => {
                         println!("player chose strength");
-                        // let (_, mut damage, _) = player_query.single_mut();
-                        // damage.0 = 100;
+                        game_state.player_advantage = Some(Advantage::Strength);
                     }
                     HEALTH_BUTTON_LABEL => {
                         println!("player chose health");
-                        // let (_, _, mut health) = player_query.single_mut();
-                        // health.0 = 1000;
+                        game_state.player_advantage = Some(Advantage::Health);
                     }
                     _ => panic!("unknown button"),
                 }
@@ -142,6 +138,8 @@ pub fn setup_world(mut commands: Commands, asset_server: Res<AssetServer>) {
         ldtk_handle: asset_server.load("default.ldtk"),
         ..Default::default()
     });
+
+    // TODO: apply player advatange
 }
 
 pub fn teardown_world(mut commands: Commands, entity_query: Query<Entity>) {
@@ -194,10 +192,10 @@ pub fn generate_collision_map(
 pub fn movement(
     input: Res<Input<KeyCode>>,
     tile_map: Res<TileMap>,
-    mut turn_state: ResMut<TurnState>,
+    mut game_state: ResMut<GameState>,
     mut player_query: Query<(&Speed, &mut Health, &mut Transform), With<Player>>,
 ) {
-    turn_state.player_just_took_turn = false;
+    game_state.player_just_took_turn = false;
 
     if let Ok((player_speed, mut player_health, mut player_transform)) =
         player_query.get_single_mut()
@@ -221,7 +219,7 @@ pub fn movement(
         new_position.x += TILE_SIZE as f32 * direction.0;
         new_position.y += TILE_SIZE as f32 * direction.1;
 
-        let going_down_while_falling = direction.1 < 0. && turn_state.player_is_falling;
+        let going_down_while_falling = direction.1 < 0. && game_state.player_is_falling;
         let mut new_position_is_valid = (
             true,
             new_position.y == current_position.y || going_down_while_falling,
@@ -247,15 +245,15 @@ pub fn movement(
         {
             player_transform.translation = new_position;
 
-            turn_state.player_num_actions_taken += 1;
-            if turn_state.player_num_actions_taken % player_speed.0 as u32 == 0 {
-                turn_state.player_just_took_turn = true;
+            game_state.player_num_actions_taken += 1;
+            if game_state.player_num_actions_taken % player_speed.0 as u32 == 0 {
+                game_state.player_just_took_turn = true;
             }
 
             // Apply gravity
             apply_gravity(
                 &tile_map,
-                &mut turn_state,
+                &mut game_state,
                 &mut player_transform,
                 &mut player_health,
             );
@@ -265,18 +263,20 @@ pub fn movement(
 
 pub fn check_for_player_death(
     mut app_state: ResMut<State<AppState>>,
+    mut game_state: ResMut<GameState>,
     player_query: Query<&Health, (With<Player>, Changed<Health>)>,
 ) {
     if let Ok(player_health) = player_query.get_single() {
         if player_health.0 <= 0 {
-            app_state.as_mut().set(AppState::MainMenu).unwrap();
+            *game_state = GameState::default();
+            (*app_state).set(AppState::MainMenu).unwrap();
         }
     }
 }
 
 fn apply_gravity(
     tile_map: &Res<TileMap>,
-    turn_state: &mut ResMut<TurnState>,
+    game_state: &mut ResMut<GameState>,
     mut player_transform: &mut Transform,
     mut player_health: &mut Health,
 ) {
@@ -284,12 +284,12 @@ fn apply_gravity(
     let mut tile_under_player = get_nearest_tile_on_grid(current_position.x, current_position.y);
     tile_under_player.1 -= 1;
 
-    turn_state.player_is_falling = match tile_map.0.get(&tile_under_player) {
+    game_state.player_is_falling = match tile_map.0.get(&tile_under_player) {
         Some(_) => false,
         None => true,
     };
 
-    if turn_state.player_is_falling {
+    if game_state.player_is_falling {
         let mut new_position = current_position.clone();
         new_position.y -= TILE_SIZE as f32;
 
@@ -299,8 +299,8 @@ fn apply_gravity(
         }
     }
 }
-pub fn run_if_player_turn_over(turn_state: Res<TurnState>) -> ShouldRun {
-    if turn_state.player_just_took_turn {
+pub fn run_if_player_turn_over(game_state: Res<GameState>) -> ShouldRun {
+    if game_state.player_just_took_turn {
         ShouldRun::Yes
     } else {
         ShouldRun::No
