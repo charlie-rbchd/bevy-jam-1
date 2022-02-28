@@ -42,7 +42,8 @@ fn main() {
         .add_system_set(
             SystemSet::on_update(components::AppState::InGame)
                 .label(SystemOrder::WorldGeneration)
-                .with_system(systems::generate_collision_map),
+                .with_system(systems::generate_collision_map)
+                .with_system(systems::apply_player_advantage),
         )
         .add_system_set(
             SystemSet::on_update(components::AppState::InGame)

@@ -138,8 +138,20 @@ pub fn setup_world(mut commands: Commands, asset_server: Res<AssetServer>) {
         ldtk_handle: asset_server.load("default.ldtk"),
         ..Default::default()
     });
+}
 
-    // TODO: apply player advatange
+pub fn apply_player_advantage(
+    mut player_query: Query<(&mut Speed, &mut Damage, &mut Health), (With<Player>, Added<Player>)>,
+    game_state: Res<GameState>,
+) {
+    if let Ok((mut speed, mut damage, mut health)) = player_query.get_single_mut() {
+        match game_state.player_advantage {
+            Some(Advantage::Speed) => speed.0 = 2,
+            Some(Advantage::Strength) => damage.0 = 100,
+            Some(Advantage::Health) => health.0 = 1000,
+            None => panic!("no advantage was selected"),
+        }
+    }
 }
 
 pub fn teardown_world(mut commands: Commands, entity_query: Query<Entity>) {
@@ -262,12 +274,14 @@ pub fn movement(
 }
 
 pub fn check_for_player_death(
+    mut tile_map: ResMut<TileMap>,
     mut app_state: ResMut<State<AppState>>,
     mut game_state: ResMut<GameState>,
     player_query: Query<&Health, (With<Player>, Changed<Health>)>,
 ) {
     if let Ok(player_health) = player_query.get_single() {
         if player_health.0 <= 0 {
+            tile_map.0.clear();
             *game_state = GameState::default();
             (*app_state).set(AppState::MainMenu).unwrap();
         }
