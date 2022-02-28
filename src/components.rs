@@ -201,25 +201,7 @@ pub struct FallingIce;
 pub struct FallingIceBundle {
     #[bundle]
     pub sprite_bundle: SpriteBundle,
+    pub damage: Damage,
+    pub health: Health,
     pub falling_ice: FallingIce,
-}
-
-impl LdtkEntity for FallingIceBundle {
-    fn bundle_entity(
-        _: &EntityInstance,
-        _: &LayerInstance,
-        _: Option<&Handle<Image>>,
-        _: Option<&TilesetDefinition>,
-        asset_server: &AssetServer,
-        _: &mut Assets<TextureAtlas>,
-    ) -> Self {
-        let texture_filename = String::from("FallingIce_Dynamic.png");
-        Self {
-            sprite_bundle: SpriteBundle {
-                texture: asset_server.load(&texture_filename),
-                ..Default::default()
-            },
-            falling_ice: FallingIce::default(),
-        }
-    }
 }

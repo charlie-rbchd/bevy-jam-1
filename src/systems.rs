@@ -394,6 +394,8 @@ pub fn update_falling_ice(
                         },
                         ..Default::default()
                     },
+                    health: Health(1),
+                    damage: Damage(100),
                     falling_ice: FallingIce::default(),
                 });
                 break;
