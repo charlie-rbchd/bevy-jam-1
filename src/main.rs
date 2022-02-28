@@ -61,8 +61,13 @@ fn main() {
             SystemSet::on_update(components::AppState::InGame)
                 .label(SystemOrder::WorldTick)
                 .after(SystemOrder::InputHandling)
+                .with_system(systems::check_for_player_death),
+        )
+        .add_system_set(
+            SystemSet::on_update(components::AppState::InGame)
+                .label(SystemOrder::WorldTick)
+                .after(SystemOrder::InputHandling)
                 .with_run_criteria(systems::run_if_player_turn_over)
-                .with_system(systems::check_for_player_death)
                 .with_system(systems::update_world)
                 .with_system(systems::update_falling_ice),
         )
