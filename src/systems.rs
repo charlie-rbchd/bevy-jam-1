@@ -2,6 +2,7 @@ use crate::components::*;
 use bevy::ecs::schedule::*;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
+use bevy_kira_audio::Audio;
 
 const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
 const HOVERED_BUTTON: Color = Color::rgb(0.25, 0.25, 0.25);
@@ -38,7 +39,7 @@ pub fn setup_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
                 text: Text::with_section(
                     "CHOOSE AN UNFAIR ADVANTAGE",
                     TextStyle {
-                        font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                        font: asset_server.load("fonts/Minecraft.ttf"),
                         font_size: 50.0,
                         color: Color::rgb(0.9, 0.9, 0.9),
                     },
@@ -69,7 +70,7 @@ pub fn setup_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
                             text: Text::with_section(
                                 label,
                                 TextStyle {
-                                    font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                                    font: asset_server.load("fonts/Minecraft.ttf"),
                                     font_size: 32.0,
                                     color: Color::rgb(0.9, 0.9, 0.9),
                                 },
@@ -80,12 +81,19 @@ pub fn setup_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
                     });
             }
         });
+
+    // preload audio
+    commands.insert_resource(UiSounds {
+        button_clicked_sfx: asset_server.load("audio/SFX_ButtonClicked.ogg"),
+    });
 }
 
 pub fn close_menu(mut commands: Commands, entity_query: Query<Entity>) {
     for e in entity_query.iter() {
         commands.entity(e).despawn();
     }
+    // unload audio
+    commands.remove_resource::<UiSounds>();
 }
 
 pub fn handle_ui_buttons(
@@ -96,11 +104,15 @@ pub fn handle_ui_buttons(
     mut app_state: ResMut<State<AppState>>,
     mut game_state: ResMut<GameState>,
     mut text_query: Query<&mut Text>,
+    ui_sounds: Res<UiSounds>,
+    audio: Res<Audio>,
 ) {
     for (interaction, mut color, children) in interaction_query.iter_mut() {
         let text = text_query.get_mut(children[0]).unwrap();
         match *interaction {
             Interaction::Clicked => {
+                audio.play(ui_sounds.button_clicked_sfx.clone());
+
                 match text.sections[0].value.as_str() {
                     SPEED_BUTTON_LABEL => {
                         println!("player chose speed");
@@ -138,6 +150,18 @@ pub fn setup_world(mut commands: Commands, asset_server: Res<AssetServer>) {
         ldtk_handle: asset_server.load("default.ldtk"),
         ..Default::default()
     });
+    // preload audio
+    commands.insert_resource(GameSounds {
+        player_movement_sfx: asset_server.load("audio/SFX_PlayerMovement.ogg"),
+    });
+}
+
+pub fn teardown_world(mut commands: Commands, entity_query: Query<Entity>) {
+    for e in entity_query.iter() {
+        commands.entity(e).despawn();
+    }
+    // unload audio
+    commands.remove_resource::<GameSounds>();
 }
 
 pub fn apply_player_advantage(
@@ -151,12 +175,6 @@ pub fn apply_player_advantage(
             Some(Advantage::Health) => health.0 = 200,
             None => panic!("no advantage was selected"),
         }
-    }
-}
-
-pub fn teardown_world(mut commands: Commands, entity_query: Query<Entity>) {
-    for e in entity_query.iter() {
-        commands.entity(e).despawn();
     }
 }
 
@@ -213,6 +231,8 @@ pub fn movement(
     tile_map: Res<TileMap>,
     mut game_state: ResMut<GameState>,
     mut player_query: Query<(&Speed, &mut Health, &mut Transform), With<Player>>,
+    game_sounds: Res<GameSounds>,
+    audio: Res<Audio>,
 ) {
     game_state.player_just_took_turn = false;
 
@@ -262,6 +282,8 @@ pub fn movement(
             && new_position_is_valid.0
             && new_position_is_valid.1
         {
+            audio.play(game_sounds.player_movement_sfx.clone());
+
             player_transform.translation = new_position;
 
             game_state.player_num_actions_taken += 1;

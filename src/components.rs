@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
+use bevy_kira_audio::AudioSource;
 
 use std::collections::HashMap;
 use std::string::String;
@@ -17,6 +18,14 @@ pub struct TileMap(pub HashMap<(i32, i32), TileType>);
 pub enum AppState {
     MainMenu,
     InGame,
+}
+
+pub struct UiSounds {
+    pub button_clicked_sfx: Handle<AudioSource>,
+}
+
+pub struct GameSounds {
+    pub player_movement_sfx: Handle<AudioSource>,
 }
 
 pub enum Advantage {
