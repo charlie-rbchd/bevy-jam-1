@@ -161,12 +161,23 @@ pub fn teardown_world(mut commands: Commands, entity_query: Query<Entity>) {
 }
 
 fn get_nearest_tile_on_grid(x: f32, y: f32) -> (i32, i32) {
-    ((x as i32 / TILE_SIZE), (y as i32 / TILE_SIZE))
+    ((x / TILE_SIZE as f32) as i32, (y / TILE_SIZE as f32) as i32)
 }
 
 fn is_position_in_bounds(x_or_y: f32) -> bool {
     let world_size_pixels = TILE_SIZE as f32 * WORLD_SIZE as f32;
     x_or_y < world_size_pixels && x_or_y > 0.
+}
+
+// Return top-left
+fn tile_pos_to_sprite_pos(x: i32, y: i32) -> Vec3 {
+    let size = TILE_SIZE as f32;
+    let half = size / 2.0f32;
+    Vec3::new(
+        (x - 2) as f32 * size - half,
+        (y + 1) as f32 * size - half,
+        1.0f32,
+    )
 }
 
 pub fn generate_collision_map(
@@ -357,7 +368,12 @@ pub fn update_world(
     }
 }
 
-pub fn update_falling_ice(tile_map: Res<TileMap>, player_query: Query<&Transform, With<Player>>) {
+pub fn update_falling_ice(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut tile_map: ResMut<TileMap>,
+    player_query: Query<&Transform, With<Player>>,
+) {
     let transform = player_query.single();
     let (x, y) = get_nearest_tile_on_grid(transform.translation.x, transform.translation.y);
 
@@ -369,7 +385,21 @@ pub fn update_falling_ice(tile_map: Res<TileMap>, player_query: Query<&Transform
                 break;
             }
             Some(TileType::FallingIce) => {
-                println!("Found falling ice!");
+                println!("Found ice!");
+                tile_map.0.remove(&tile_to_inspect);
+
+                let sprite_pos = tile_pos_to_sprite_pos(x, j);
+                commands.spawn_bundle(FallingIceBundle {
+                    sprite_bundle: SpriteBundle {
+                        texture: asset_server.load("ObstacleType1.png"),
+                        transform: Transform {
+                            translation: sprite_pos,
+                            ..Default::default()
+                        },
+                        ..Default::default()
+                    },
+                    falling_ice: FallingIce::default(),
+                });
                 break;
             }
             Some(TileType::Ladder) => {} // go through
