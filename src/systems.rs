@@ -387,7 +387,7 @@ pub fn update_falling_ice(
                 let sprite_pos = tile_pos_to_sprite_pos(x, j);
                 commands.spawn_bundle(FallingIceBundle {
                     sprite_bundle: SpriteBundle {
-                        texture: asset_server.load("ObstacleType1.png"),
+                        texture: asset_server.load("FallingIce.png"),
                         transform: Transform {
                             translation: sprite_pos,
                             ..Default::default()
