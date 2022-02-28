@@ -41,7 +41,11 @@ fn main() {
         .add_system_set(
             SystemSet::on_enter(components::AppState::InGame)
                 .label(SystemOrder::WorldGeneration)
-                .with_system(systems::setup_world)
+                .with_system(systems::setup_world),
+        )
+        .add_system_set(
+            SystemSet::on_update(components::AppState::InGame)
+                .label(SystemOrder::WorldGeneration)
                 .with_system(systems::generate_collision_map),
         )
         .add_system_set(

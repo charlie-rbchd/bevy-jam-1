@@ -10,12 +10,12 @@ const SPEED_BUTTON_LABEL: &str = "SPEED";
 const STRENGTH_BUTTON_LABEL: &str = "STRENGTH";
 const HEALTH_BUTTON_LABEL: &str = "HEALTH";
 
-pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn_bundle(LdtkWorldBundle {
-        ldtk_handle: asset_server.load("default.ldtk"),
-        ..Default::default()
-    });
+pub fn setup(asset_server: Res<AssetServer>) {
+    asset_server.watch_for_changes().unwrap();
+}
 
+pub fn setup_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.spawn_bundle(UiCameraBundle::default());
     commands
         .spawn_bundle(NodeBundle {
             style: Style {
@@ -82,12 +82,8 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         });
 }
 
-pub fn setup_menu(mut commands: Commands) {
-    commands.spawn_bundle(UiCameraBundle::default());
-}
-
-pub fn close_menu(mut commands: Commands, mut camera_query: Query<(Entity, &Camera)>) {
-    if let Ok((e, _)) = camera_query.get_single_mut() {
+pub fn close_menu(mut commands: Commands, entity_query: Query<Entity>) {
+    for e in entity_query.iter() {
         commands.entity(e).despawn();
     }
 }
@@ -99,7 +95,7 @@ pub fn handle_ui_buttons(
     >,
     mut app_state: ResMut<State<AppState>>,
     mut text_query: Query<&mut Text>,
-    mut player_query: Query<(&mut Speed, &mut Damage, &mut Health), With<Player>>,
+    // mut player_query: Query<(&mut Speed, &mut Damage, &mut Health), With<Player>>,
 ) {
     for (interaction, mut color, children) in interaction_query.iter_mut() {
         let text = text_query.get_mut(children[0]).unwrap();
@@ -108,18 +104,19 @@ pub fn handle_ui_buttons(
                 match text.sections[0].value.as_str() {
                     SPEED_BUTTON_LABEL => {
                         println!("player chose speed");
-                        let (mut speed, _, _) = player_query.single_mut();
-                        speed.0 = 2;
+                        // FIXME: save this somewhere are apply during setup_world
+                        // let (mut speed, _, _) = player_query.single_mut();
+                        // speed.0 = 2;
                     }
                     STRENGTH_BUTTON_LABEL => {
                         println!("player chose strength");
-                        let (_, mut damage, _) = player_query.single_mut();
-                        damage.0 = 100;
+                        // let (_, mut damage, _) = player_query.single_mut();
+                        // damage.0 = 100;
                     }
                     HEALTH_BUTTON_LABEL => {
                         println!("player chose health");
-                        let (_, _, mut health) = player_query.single_mut();
-                        health.0 = 1000;
+                        // let (_, _, mut health) = player_query.single_mut();
+                        // health.0 = 1000;
                     }
                     _ => panic!("unknown button"),
                 }
@@ -139,12 +136,16 @@ pub fn handle_ui_buttons(
 const TILE_SIZE: i32 = 64;
 const WORLD_SIZE: i32 = 16;
 
-pub fn setup_world(mut commands: Commands) {
+pub fn setup_world(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
+    commands.spawn_bundle(LdtkWorldBundle {
+        ldtk_handle: asset_server.load("default.ldtk"),
+        ..Default::default()
+    });
 }
 
-pub fn teardown_world(mut commands: Commands, mut camera_query: Query<(Entity, &Camera)>) {
-    if let Ok((e, _)) = camera_query.get_single_mut() {
+pub fn teardown_world(mut commands: Commands, entity_query: Query<Entity>) {
+    for e in entity_query.iter() {
         commands.entity(e).despawn();
     }
 }
@@ -269,7 +270,6 @@ pub fn check_for_player_death(
     if let Ok(player_health) = player_query.get_single() {
         if player_health.0 <= 0 {
             app_state.as_mut().set(AppState::MainMenu).unwrap();
-            // TODO: reset world state
         }
     }
 }
