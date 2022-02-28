@@ -404,6 +404,21 @@ pub fn update_falling_ice(
     }
 }
 
+pub fn move_falling_ice(
+    mut commands: Commands,
+    mut ice_query: Query<(Entity, &mut Transform), With<FallingIce>>,
+) {
+    for (entity, mut transform) in ice_query.iter_mut() {
+        let t = transform.translation.clone();
+        transform.translation = Vec3::new(t.x, t.y - TILE_SIZE as f32, t.z);
+
+        let (x, y) = get_nearest_tile_on_grid(transform.translation.x, transform.translation.y);
+        if x < 0 || y < 0 {
+            commands.entity(entity).despawn();
+        }
+    }
+}
+
 const ASPECT_RATIO: f32 = 16.0 / 9.0;
 
 pub fn camera_fit_inside_current_level(

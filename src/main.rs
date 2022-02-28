@@ -64,7 +64,8 @@ fn main() {
                 .after(SystemOrder::InputHandling)
                 .with_run_criteria(systems::run_if_player_turn_over)
                 .with_system(systems::update_world)
-                .with_system(systems::update_falling_ice),
+                .with_system(systems::update_falling_ice)
+                .with_system(systems::move_falling_ice),
         )
         .add_system_set(
             SystemSet::on_exit(components::AppState::InGame)
