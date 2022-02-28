@@ -1,6 +1,7 @@
 use bevy::ecs::schedule::*;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
+use bevy_kira_audio::AudioPlugin;
 
 mod components;
 mod systems;
@@ -18,6 +19,7 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_plugin(LdtkPlugin)
+        .add_plugin(AudioPlugin)
         .insert_resource(LevelSelection::Uid(0))
         .insert_resource(components::TileMap::default())
         .insert_resource(components::GameState::default())
