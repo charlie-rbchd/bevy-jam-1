@@ -148,7 +148,7 @@ pub fn apply_player_advantage(
         match game_state.player_advantage {
             Some(Advantage::Speed) => speed.0 = 2,
             Some(Advantage::Strength) => damage.0 = 100,
-            Some(Advantage::Health) => health.0 = 1000,
+            Some(Advantage::Health) => health.0 = 200,
             None => panic!("no advantage was selected"),
         }
     }
