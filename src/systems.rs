@@ -288,13 +288,6 @@ pub fn movement(
             && new_position_is_valid.0
             && new_position_is_valid.1
         {
-            let mut rng = rand::thread_rng();
-            audio.play(
-                game_sounds.player_movement_sfxs
-                    [rng.gen_range(0..game_sounds.player_movement_sfxs.len())]
-                .clone(),
-            );
-
             player_transform.translation = new_position;
 
             game_state.player_num_actions_taken += 1;
@@ -309,6 +302,15 @@ pub fn movement(
                 &mut player_transform,
                 &mut player_health,
             );
+
+            if !game_state.player_is_falling {
+                let mut rng = rand::thread_rng();
+                audio.play(
+                    game_sounds.player_movement_sfxs
+                        [rng.gen_range(0..game_sounds.player_movement_sfxs.len())]
+                    .clone(),
+                );
+            }
         }
     }
 }
