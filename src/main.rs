@@ -28,6 +28,7 @@ fn main() {
     console_error_panic_hook::set_once();
 
     App::new()
+        .insert_resource(ClearColor(Color::rgb_u8(174, 188, 233)))
         .add_plugins(DefaultPlugins)
         .add_plugin(LdtkPlugin)
         .add_plugin(AudioPlugin)

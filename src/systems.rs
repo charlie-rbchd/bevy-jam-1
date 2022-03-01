@@ -5,9 +5,6 @@ use bevy_ecs_ldtk::prelude::*;
 use bevy_kira_audio::Audio;
 use rand::Rng;
 
-const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
-const HOVERED_BUTTON: Color = Color::rgb(0.25, 0.25, 0.25);
-
 const SPEED_BUTTON_LABEL: &str = "SPEED";
 const STRENGTH_BUTTON_LABEL: &str = "STRENGTH";
 const HEALTH_BUTTON_LABEL: &str = "HEALTH";
@@ -19,6 +16,15 @@ pub fn setup(asset_server: Res<AssetServer>, audio: Res<Audio>) {
 
 pub fn setup_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn_bundle(UiCameraBundle::default());
+    commands.spawn_bundle(NodeBundle {
+        style: Style {
+            size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
+            position_type: PositionType::Absolute,
+            ..Default::default()
+        },
+        color: Color::rgb_u8(174, 188, 233).into(),
+        ..Default::default()
+    });
     commands
         .spawn_bundle(NodeBundle {
             style: Style {
@@ -64,7 +70,7 @@ pub fn setup_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
                             align_items: AlignItems::Center,
                             ..Default::default()
                         },
-                        color: NORMAL_BUTTON.into(),
+                        color: Color::rgb_u8(116, 147, 226).into(),
                         ..Default::default()
                     })
                     .with_children(|parent| {
@@ -110,7 +116,7 @@ pub fn handle_ui_buttons(
     audio: Res<Audio>,
 ) {
     for (interaction, mut color, children) in interaction_query.iter_mut() {
-        let text = text_query.get_mut(children[0]).unwrap();
+        let mut text = text_query.get_mut(children[0]).unwrap();
         match *interaction {
             Interaction::Clicked => {
                 audio.play(ui_sounds.button_clicked_sfx.clone());
@@ -134,10 +140,12 @@ pub fn handle_ui_buttons(
                 app_state.set(AppState::InGame).unwrap();
             }
             Interaction::Hovered => {
-                *color = HOVERED_BUTTON.into();
+                *color = Color::rgb_u8(193, 238, 247).into();
+                text.sections[0].style.color = Color::rgb(0.3, 0.3, 0.3).into();
             }
             Interaction::None => {
-                *color = NORMAL_BUTTON.into();
+                *color = Color::rgb_u8(116, 147, 226).into();
+                text.sections[0].style.color = Color::rgb(0.9, 0.9, 0.9).into();
             }
         }
     }
