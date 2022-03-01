@@ -25,7 +25,7 @@ pub struct UiSounds {
 }
 
 pub struct GameSounds {
-    pub player_movement_sfx: Handle<AudioSource>,
+    pub player_movement_sfxs: Vec<Handle<AudioSource>>,
 }
 
 pub enum Advantage {

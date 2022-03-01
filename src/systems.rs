@@ -3,6 +3,7 @@ use bevy::ecs::schedule::*;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use bevy_kira_audio::Audio;
+use rand::Rng;
 
 const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
 const HOVERED_BUTTON: Color = Color::rgb(0.25, 0.25, 0.25);
@@ -11,8 +12,9 @@ const SPEED_BUTTON_LABEL: &str = "SPEED";
 const STRENGTH_BUTTON_LABEL: &str = "STRENGTH";
 const HEALTH_BUTTON_LABEL: &str = "HEALTH";
 
-pub fn setup(asset_server: Res<AssetServer>) {
+pub fn setup(asset_server: Res<AssetServer>, audio: Res<Audio>) {
     asset_server.watch_for_changes().unwrap();
+    audio.play_looped(asset_server.load("audio/AMB_PolarWind_Loop.ogg"));
 }
 
 pub fn setup_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
@@ -152,7 +154,11 @@ pub fn setup_world(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
     // preload audio
     commands.insert_resource(GameSounds {
-        player_movement_sfx: asset_server.load("audio/SFX_PlayerMovement.ogg"),
+        player_movement_sfxs: vec![
+            asset_server.load("audio/SFX_PlayerMovement_01.ogg"),
+            asset_server.load("audio/SFX_PlayerMovement_02.ogg"),
+            asset_server.load("audio/SFX_PlayerMovement_03.ogg"),
+        ],
     });
 }
 
@@ -282,7 +288,12 @@ pub fn movement(
             && new_position_is_valid.0
             && new_position_is_valid.1
         {
-            audio.play(game_sounds.player_movement_sfx.clone());
+            let mut rng = rand::thread_rng();
+            audio.play(
+                game_sounds.player_movement_sfxs
+                    [rng.gen_range(0..game_sounds.player_movement_sfxs.len())]
+                .clone(),
+            );
 
             player_transform.translation = new_position;
 

@@ -9,6 +9,7 @@ edition = "2021"
 bevy_ecs_ldtk = { version = "0.2.0", features = ["derive", "atlas"] }
 bevy_kira_audio = "0.8.0"
 console_error_panic_hook = "0.1"
+rand = "0.8.5"
 
 [dependencies.bevy]
 version = "0.6.0"
