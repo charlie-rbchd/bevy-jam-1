@@ -787,29 +787,9 @@
 		{
 			"__cWid": 6,
 			"__cHei": 6,
-			"identifier": "MountainTileSetV0",
-			"uid": 4,
-			"relPath": "MountainTileSetV0.png",
-			"pxWid": 384,
-			"pxHei": 384,
-			"tileGridSize": 64,
-			"spacing": 0,
-			"padding": 0,
-			"tagsSourceEnumUid": null,
-			"enumTags": [],
-			"customData": [],
-			"savedSelections": [],
-			"cachedPixelData": {
-				"opaqueTiles": "000001000000000000000000000000000001",
-				"averageColors": "19790000000009980000fabe0000000052ee0eb500000000000058ae00000eb569be00000000d8ad00000ace000068ae000058ae69be58ae69be679d000049be69be59be0000f79d"
-			}
-		},
-		{
-			"__cWid": 6,
-			"__cHei": 6,
 			"identifier": "MountainTileSet2",
 			"uid": 26,
-			"relPath": "../../../Desktop/Drawings/MountainGameJam/MountainTileSet.png",
+			"relPath": "MountainTileSetV0.png",
 			"pxWid": 384,
 			"pxHei": 384,
 			"tileGridSize": 64,
@@ -825,10 +805,10 @@
 			}
 		}
 	], "enums": [{ "identifier": "ObstacleType", "uid": 24, "values": [
-		{ "id": "ObstacleType0", "tileId": 1, "color": 6278371, "__tileSrcRect": [64,0,64,64] },
-		{ "id": "ObstacleType1", "tileId": 7, "color": 2236212, "__tileSrcRect": [64,64,64,64] },
-		{ "id": "ObstacleType2", "tileId": 8, "color": 16777215, "__tileSrcRect": [128,64,64,64] }
-	], "iconTilesetUid": 4, "externalRelPath": null, "externalFileChecksum": null }], "externalEnums": [], "levelFields": [] },
+		{ "id": "ObstacleType0", "tileId": null, "color": 6278371, "__tileSrcRect": null },
+		{ "id": "ObstacleType1", "tileId": null, "color": 2236212, "__tileSrcRect": null },
+		{ "id": "ObstacleType2", "tileId": null, "color": 16777215, "__tileSrcRect": null }
+	], "iconTilesetUid": null, "externalRelPath": null, "externalFileChecksum": null }], "externalEnums": [], "levelFields": [] },
 	"levels": [
 		{
 			"identifier": "Level_0",
@@ -1010,7 +990,7 @@
 					"__pxTotalOffsetX": 0,
 					"__pxTotalOffsetY": 0,
 					"__tilesetDefUid": 26,
-					"__tilesetRelPath": "../../../Desktop/Drawings/MountainGameJam/MountainTileSet.png",
+					"__tilesetRelPath": "MountainTileSetV0.png",
 					"levelId": 0,
 					"layerDefUid": 33,
 					"pxOffsetX": 0,
@@ -1054,7 +1034,7 @@
 					"__pxTotalOffsetX": 0,
 					"__pxTotalOffsetY": 0,
 					"__tilesetDefUid": 26,
-					"__tilesetRelPath": "../../../Desktop/Drawings/MountainGameJam/MountainTileSet.png",
+					"__tilesetRelPath": "MountainTileSetV0.png",
 					"levelId": 0,
 					"layerDefUid": 1,
 					"pxOffsetX": 0,
@@ -1186,7 +1166,7 @@
 					"__pxTotalOffsetX": 0,
 					"__pxTotalOffsetY": 0,
 					"__tilesetDefUid": 26,
-					"__tilesetRelPath": "../../../Desktop/Drawings/MountainGameJam/MountainTileSet.png",
+					"__tilesetRelPath": "MountainTileSetV0.png",
 					"levelId": 0,
 					"layerDefUid": 36,
 					"pxOffsetX": 0,
