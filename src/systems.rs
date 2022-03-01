@@ -154,7 +154,7 @@ pub fn handle_ui_buttons(
 const TILE_SIZE: i32 = 64;
 const WORLD_SIZE: i32 = 16;
 
-pub fn setup_world(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn load_world(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
     commands.spawn_bundle(LdtkWorldBundle {
         ldtk_handle: asset_server.load("default.ldtk"),
@@ -186,7 +186,7 @@ pub fn teardown_world(mut commands: Commands, entity_query: Query<Entity>) {
     commands.remove_resource::<GameSounds>();
 }
 
-pub fn apply_player_advantage(
+pub fn apply_player_advantage_on_player_added(
     mut player_query: Query<(&mut Speed, &mut Damage, &mut Health), (With<Player>, Added<Player>)>,
     game_state: Res<GameState>,
 ) {
@@ -216,7 +216,7 @@ fn tile_pos_to_sprite_pos(x: i32, y: i32) -> Vec3 {
     Vec3::new(x as f32 * size + half, y as f32 * size + half, 1.)
 }
 
-pub fn generate_collision_map(
+pub fn build_tilemap_with_added_tiles(
     mut tile_map: ResMut<TileMap>,
     wall_query: Query<&Transform, Added<WallTile>>,
     climbable_query: Query<&Transform, Added<ClimbableTile>>,
@@ -248,7 +248,7 @@ pub fn generate_collision_map(
     }
 }
 
-pub fn movement(
+pub fn move_player_from_input(
     input: Res<Input<KeyCode>>,
     tile_map: Res<TileMap>,
     mut game_state: ResMut<GameState>,
@@ -385,7 +385,7 @@ fn apply_gravity(
         }
     }
 }
-pub fn run_if_player_turn_over(game_state: Res<GameState>) -> ShouldRun {
+pub fn run_if_player_moved(game_state: Res<GameState>) -> ShouldRun {
     if game_state.player_just_took_turn {
         ShouldRun::Yes
     } else {
@@ -399,7 +399,7 @@ fn entities_are_overlapping(t1: &Transform, t2: &Transform) -> bool {
     t1_on_grid.0 == t2_on_grid.0 && t1_on_grid.1 == t2_on_grid.1
 }
 
-pub fn update_world(
+pub fn apply_damage_to_player(
     mut commands: Commands,
     mut player_query: Query<(&mut Health, &Damage, &Transform), With<Player>>,
     mut obstacle_query: Query<(Entity, &mut Health, &Damage, &Transform), Without<Player>>,
@@ -429,7 +429,7 @@ pub fn update_world(
     }
 }
 
-pub fn update_falling_ice(
+pub fn spawn_falling_ice_over_player(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut tile_map: ResMut<TileMap>,
@@ -488,7 +488,7 @@ pub fn move_falling_ice(
 
 const ASPECT_RATIO: f32 = 16.0 / 9.0;
 
-pub fn camera_fit_inside_current_level(
+pub fn fit_camera_inside_current_level(
     mut camera_query: Query<
         (
             &mut bevy::render::camera::OrthographicProjection,

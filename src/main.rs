@@ -8,15 +8,15 @@ mod systems;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, SystemLabel)]
 enum GameSystem {
-    SetupWorld,
-    GenerateCollisionMap,
+    LoadWorld,
+    BuildTilemap,
     ApplyPlayerAdvantage,
-    Movement,
+    MovePlayer,
     CheckForPlayerDeath,
-    UpdateWorld,
-    UpdateFallingIce,
+    ApplyDamageToPlayer,
+    SpawnFallingIceOverPlayer,
     MoveFallingIce,
-    Camera,
+    FitCamera,
     TeardownWorld,
     _SetupMenu,
     _CloseMenu,
@@ -45,57 +45,56 @@ fn main() {
         .add_startup_system(systems::setup)
         .add_system_set(
             SystemSet::on_enter(components::AppState::InGame)
-                .label(GameSystem::SetupWorld)
-                .with_system(systems::setup_world),
+                .label(GameSystem::LoadWorld)
+                .with_system(systems::load_world),
         )
         .add_system_set(
             SystemSet::on_update(components::AppState::InGame)
-                .label(GameSystem::GenerateCollisionMap)
-                .with_system(systems::generate_collision_map),
+                .label(GameSystem::BuildTilemap)
+                .with_system(systems::build_tilemap_with_added_tiles),
         )
         .add_system_set(
             SystemSet::on_update(components::AppState::InGame)
                 .label(GameSystem::ApplyPlayerAdvantage)
-                .with_system(systems::apply_player_advantage),
+                .with_system(systems::apply_player_advantage_on_player_added),
         )
         .add_system_set(
             SystemSet::on_update(components::AppState::InGame)
-                .after(GameSystem::SetupWorld)
-                .label(GameSystem::Movement)
-                .with_system(systems::movement),
+                .label(GameSystem::MovePlayer)
+                .with_system(systems::move_player_from_input),
         )
         .add_system_set(
             SystemSet::on_update(components::AppState::InGame)
-                .after(GameSystem::Movement)
-                .label(GameSystem::Camera)
-                .with_system(systems::camera_fit_inside_current_level),
+                .after(GameSystem::MovePlayer)
+                .label(GameSystem::FitCamera)
+                .with_system(systems::fit_camera_inside_current_level),
         )
         .add_system_set(
             SystemSet::on_update(components::AppState::InGame)
-                .after(GameSystem::Movement)
-                .label(GameSystem::CheckForPlayerDeath)
-                .with_system(systems::check_for_player_death),
-        )
-        .add_system_set(
-            SystemSet::on_update(components::AppState::InGame)
-                .with_run_criteria(systems::run_if_player_turn_over)
-                .after(GameSystem::Movement)
-                .label(GameSystem::UpdateWorld)
-                .with_system(systems::update_world),
-        )
-        .add_system_set(
-            SystemSet::on_update(components::AppState::InGame)
-                .with_run_criteria(systems::run_if_player_turn_over)
-                .after(GameSystem::Movement)
-                .label(GameSystem::UpdateFallingIce)
-                .with_system(systems::update_falling_ice),
-        )
-        .add_system_set(
-            SystemSet::on_update(components::AppState::InGame)
-                .with_run_criteria(systems::run_if_player_turn_over)
-                .after(GameSystem::Movement)
+                .with_run_criteria(systems::run_if_player_moved)
+                .after(GameSystem::MovePlayer)
                 .label(GameSystem::MoveFallingIce)
                 .with_system(systems::move_falling_ice),
+        )
+        .add_system_set(
+            SystemSet::on_update(components::AppState::InGame)
+                .with_run_criteria(systems::run_if_player_moved)
+                .after(GameSystem::MoveFallingIce)
+                .label(GameSystem::ApplyDamageToPlayer)
+                .with_system(systems::apply_damage_to_player),
+        )
+        .add_system_set(
+            SystemSet::on_update(components::AppState::InGame)
+                .with_run_criteria(systems::run_if_player_moved)
+                .after(GameSystem::MoveFallingIce)
+                .label(GameSystem::SpawnFallingIceOverPlayer)
+                .with_system(systems::spawn_falling_ice_over_player), // spawn ice now for the next turn
+        )
+        .add_system_set(
+            SystemSet::on_update(components::AppState::InGame)
+                .after(GameSystem::MovePlayer)
+                .label(GameSystem::CheckForPlayerDeath)
+                .with_system(systems::check_for_player_death),
         )
         .add_system_set(
             SystemSet::on_exit(components::AppState::InGame)
