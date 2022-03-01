@@ -159,9 +159,13 @@ pub fn setup_world(mut commands: Commands, asset_server: Res<AssetServer>) {
             asset_server.load("audio/SFX_PlayerMovement_02.ogg"),
             asset_server.load("audio/SFX_PlayerMovement_03.ogg"),
         ],
-        player_climb_sfxs: vec![
+        player_climb_up_sfxs: vec![
             asset_server.load("audio/SFX_PlayerClimb_01.ogg"),
             asset_server.load("audio/SFX_PlayerClimb_02.ogg"),
+        ],
+        player_climb_down_sfxs: vec![
+            asset_server.load("audio/SFX_PlayerClimb_03.ogg"),
+            asset_server.load("audio/SFX_PlayerClimb_04.ogg"),
         ],
     });
 }
@@ -309,10 +313,16 @@ pub fn movement(
 
             if !game_state.player_is_falling {
                 let mut rng = rand::thread_rng();
-                if direction.1 != 0. {
+                if direction.1 > 0. {
                     audio.play(
-                        game_sounds.player_climb_sfxs
-                            [rng.gen_range(0..game_sounds.player_climb_sfxs.len())]
+                        game_sounds.player_climb_up_sfxs
+                            [rng.gen_range(0..game_sounds.player_climb_up_sfxs.len())]
+                        .clone(),
+                    );
+                } else if direction.1 < 0. {
+                    audio.play(
+                        game_sounds.player_climb_down_sfxs
+                            [rng.gen_range(0..game_sounds.player_climb_down_sfxs.len())]
                         .clone(),
                     );
                 } else {
