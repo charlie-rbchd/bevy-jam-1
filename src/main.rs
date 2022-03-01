@@ -7,12 +7,19 @@ mod components;
 mod systems;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, SystemLabel)]
-enum SystemOrder {
-    WorldGeneration,
-    InputHandling,
-    WorldTick,
+enum GameSystem {
+    SetupWorld,
+    GenerateCollisionMap,
+    _ApplyPlayerAdvantage,
+    Movement,
+    CheckForPlayerDeath,
+    UpdateWorld,
+    UpdateFallingIce,
+    MoveFallingIce,
     Camera,
-    WorldTeardown,
+    TeardownWorld,
+    _SetupMenu,
+    _CloseMenu,
 }
 
 fn main() {
@@ -37,45 +44,61 @@ fn main() {
         .add_startup_system(systems::setup)
         .add_system_set(
             SystemSet::on_enter(components::AppState::InGame)
-                .label(SystemOrder::WorldGeneration)
+                .label(GameSystem::SetupWorld)
                 .with_system(systems::setup_world),
         )
         .add_system_set(
             SystemSet::on_update(components::AppState::InGame)
-                .label(SystemOrder::WorldGeneration)
-                .with_system(systems::generate_collision_map)
+                .label(GameSystem::GenerateCollisionMap)
+                .with_system(systems::generate_collision_map),
+        )
+        .add_system_set(
+            SystemSet::on_update(components::AppState::InGame)
+                .label(GameSystem::GenerateCollisionMap)
                 .with_system(systems::apply_player_advantage),
         )
         .add_system_set(
             SystemSet::on_update(components::AppState::InGame)
-                .label(SystemOrder::InputHandling)
-                .after(SystemOrder::WorldGeneration)
+                .after(GameSystem::SetupWorld)
+                .label(GameSystem::Movement)
                 .with_system(systems::movement),
         )
         .add_system_set(
             SystemSet::on_update(components::AppState::InGame)
-                .label(SystemOrder::Camera)
-                .after(SystemOrder::InputHandling)
+                .after(GameSystem::Movement)
+                .label(GameSystem::Camera)
                 .with_system(systems::camera_fit_inside_current_level),
         )
         .add_system_set(
             SystemSet::on_update(components::AppState::InGame)
-                .label(SystemOrder::WorldTick)
-                .after(SystemOrder::InputHandling)
+                .after(GameSystem::Movement)
+                .label(GameSystem::CheckForPlayerDeath)
                 .with_system(systems::check_for_player_death),
         )
         .add_system_set(
             SystemSet::on_update(components::AppState::InGame)
-                .label(SystemOrder::WorldTick)
-                .after(SystemOrder::InputHandling)
                 .with_run_criteria(systems::run_if_player_turn_over)
-                .with_system(systems::update_world)
-                .with_system(systems::update_falling_ice)
+                .after(GameSystem::Movement)
+                .label(GameSystem::UpdateWorld)
+                .with_system(systems::update_world),
+        )
+        .add_system_set(
+            SystemSet::on_update(components::AppState::InGame)
+                .with_run_criteria(systems::run_if_player_turn_over)
+                .after(GameSystem::Movement)
+                .label(GameSystem::UpdateFallingIce)
+                .with_system(systems::update_falling_ice),
+        )
+        .add_system_set(
+            SystemSet::on_update(components::AppState::InGame)
+                .with_run_criteria(systems::run_if_player_turn_over)
+                .after(GameSystem::Movement)
+                .label(GameSystem::MoveFallingIce)
                 .with_system(systems::move_falling_ice),
         )
         .add_system_set(
             SystemSet::on_exit(components::AppState::InGame)
-                .label(SystemOrder::WorldTeardown)
+                .label(GameSystem::TeardownWorld)
                 .with_system(systems::teardown_world),
         )
         .add_system_set(
