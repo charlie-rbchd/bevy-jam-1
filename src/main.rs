@@ -10,7 +10,7 @@ mod systems;
 enum GameSystem {
     SetupWorld,
     GenerateCollisionMap,
-    _ApplyPlayerAdvantage,
+    ApplyPlayerAdvantage,
     Movement,
     CheckForPlayerDeath,
     UpdateWorld,
@@ -54,7 +54,7 @@ fn main() {
         )
         .add_system_set(
             SystemSet::on_update(components::AppState::InGame)
-                .label(GameSystem::GenerateCollisionMap)
+                .label(GameSystem::ApplyPlayerAdvantage)
                 .with_system(systems::apply_player_advantage),
         )
         .add_system_set(
