@@ -92,7 +92,7 @@ pub fn setup_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
 
     // preload audio
     commands.insert_resource(UiSounds {
-        button_clicked_sfx: asset_server.load("audio/SFX_ButtonClicked.ogg"),
+        button_clicked_sfx: asset_server.load("audio/SFX_PlayerClimb_02.ogg"),
     });
 }
 
