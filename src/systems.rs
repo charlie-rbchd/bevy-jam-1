@@ -213,7 +213,7 @@ fn is_position_in_bounds(x_or_y: f32) -> bool {
 fn tile_pos_to_sprite_pos(x: i32, y: i32) -> Vec3 {
     let size = TILE_SIZE as f32;
     let half = size / 2.;
-    Vec3::new(x as f32 * size + half, y as f32 * size + half, 1.)
+    Vec3::new(x as f32 * size + half, y as f32 * size + half, 100.)
 }
 
 pub fn build_tilemap_with_added_tiles(
@@ -442,11 +442,11 @@ pub fn spawn_falling_ice_over_player(
         let tile_to_inspect = (x, j);
         match tile_map.0.get(&tile_to_inspect) {
             Some(TileType::Wall) => {
-                println!("Found wall!");
+                // println!("Found wall!");
                 break;
             }
             Some(TileType::FallingIce) => {
-                println!("Found ice!");
+                // println!("Found ice!");
                 tile_map.0.remove(&tile_to_inspect);
 
                 let sprite_pos = tile_pos_to_sprite_pos(x, j);
