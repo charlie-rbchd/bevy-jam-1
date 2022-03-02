@@ -157,7 +157,7 @@ const WORLD_SIZE: i32 = 16;
 pub fn load_world(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
     commands.spawn_bundle(LdtkWorldBundle {
-        ldtk_handle: asset_server.load("default.ldtk"),
+        ldtk_handle: asset_server.load("default_baked.ldtk"),
         ..Default::default()
     });
     // preload audio
