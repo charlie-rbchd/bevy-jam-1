@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 86,
+	"nextUid": 87,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -289,6 +289,31 @@
 			"pivotX": 0,
 			"pivotY": 0,
 			"fieldDefs": []
+		},
+		{
+			"identifier": "Goal",
+			"uid": 86,
+			"tags": [],
+			"width": 64,
+			"height": 64,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#CC77F1",
+			"renderMode": "Rectangle",
+			"showName": true,
+			"tilesetId": null,
+			"tileId": null,
+			"tileRenderMode": "FitInside",
+			"maxCount": 1,
+			"limitScope": "PerLevel",
+			"limitBehavior": "DiscardOldOnes",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": []
 		}
 	], "tilesets": [
 		{
@@ -403,13 +428,13 @@
 						},
 						{
 							"__identifier": "Obstacle",
-							"__grid": [2,2],
+							"__grid": [3,14],
 							"__pivot": [0,0],
 							"__tile": null,
 							"width": 64,
 							"height": 64,
 							"defUid": 20,
-							"px": [128,128],
+							"px": [192,896],
 							"fieldInstances": [
 								{
 									"__identifier": "Speed",
@@ -483,6 +508,17 @@
 							"height": 64,
 							"defUid": 26,
 							"px": [448,256],
+							"fieldInstances": []
+						},
+						{
+							"__identifier": "Goal",
+							"__grid": [2,2],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 64,
+							"height": 64,
+							"defUid": 86,
+							"px": [128,128],
 							"fieldInstances": []
 						}
 					]

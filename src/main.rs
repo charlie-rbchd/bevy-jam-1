@@ -14,6 +14,7 @@ enum GameSystem {
     MovePlayer,
     ApplySpeedTransparent,
     CheckForPlayerDeath,
+    CheckPlayerReachedGoal,
     ApplyDamageToPlayer,
     SpawnFallingIceOverPlayer,
     MoveFallingIce,
@@ -43,6 +44,7 @@ fn main() {
         .register_ldtk_int_cell::<components::FallingIceTileBundle>(3)
         .register_ldtk_entity::<components::PlayerBundle>("Player")
         .register_ldtk_entity::<components::ObstacleBundle>("Obstacle")
+        .register_ldtk_entity::<components::GoalBundle>("Goal")
         .add_startup_system(systems::setup)
         .add_system_set(
             SystemSet::on_enter(components::AppState::InGame)
@@ -103,6 +105,12 @@ fn main() {
                 .after(GameSystem::MovePlayer)
                 .label(GameSystem::CheckForPlayerDeath)
                 .with_system(systems::check_for_player_death),
+        )
+        .add_system_set(
+            SystemSet::on_update(components::AppState::InGame)
+                .after(GameSystem::CheckForPlayerDeath)
+                .label(GameSystem::CheckPlayerReachedGoal)
+                .with_system(systems::check_player_reached_goal),
         )
         .add_system_set(
             SystemSet::on_exit(components::AppState::InGame)

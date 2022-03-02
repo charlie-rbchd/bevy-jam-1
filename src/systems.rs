@@ -370,6 +370,16 @@ pub fn move_player_from_input(
     }
 }
 
+fn return_to_main_menu(
+    tile_map: &mut ResMut<TileMap>,
+    app_state: &mut ResMut<State<AppState>>,
+    game_state: &mut ResMut<GameState>,
+) {
+    tile_map.0.clear();
+    **game_state = GameState::default();
+    (*app_state).set(AppState::MainMenu).unwrap();
+}
+
 pub fn check_for_player_death(
     mut tile_map: ResMut<TileMap>,
     mut app_state: ResMut<State<AppState>>,
@@ -378,9 +388,23 @@ pub fn check_for_player_death(
 ) {
     if let Ok(player_health) = player_query.get_single() {
         if player_health.0 <= 0 {
-            tile_map.0.clear();
-            *game_state = GameState::default();
-            (*app_state).set(AppState::MainMenu).unwrap();
+            return_to_main_menu(&mut tile_map, &mut app_state, &mut game_state);
+        }
+    }
+}
+
+pub fn check_player_reached_goal(
+    goal_query: Query<&Transform, With<Goal>>,
+    player_query: Query<&Transform, (With<Player>, Changed<Transform>)>,
+    mut tile_map: ResMut<TileMap>,
+    mut app_state: ResMut<State<AppState>>,
+    mut game_state: ResMut<GameState>,
+) {
+    if let Ok(player_transform) = player_query.get_single() {
+        if let Ok(goal_transform) = goal_query.get_single() {
+            if entities_are_overlapping(player_transform, goal_transform) {
+                return_to_main_menu(&mut tile_map, &mut app_state, &mut game_state);
+            }
         }
     }
 }

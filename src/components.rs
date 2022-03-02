@@ -87,8 +87,6 @@ impl LdtkEntity for PlayerBundle {
         asset_server: &AssetServer,
         _: &mut Assets<TextureAtlas>,
     ) -> Self {
-        // TODO: different starting stats depending on which advantage is chosen
-
         Self {
             sprite_bundle: SpriteBundle {
                 texture: asset_server.load("Player.png"),
@@ -177,6 +175,35 @@ impl LdtkEntity for ObstacleBundle {
             speed,
             damage,
             health,
+        }
+    }
+}
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component)]
+pub struct Goal;
+
+#[derive(Bundle)]
+pub struct GoalBundle {
+    #[bundle]
+    pub sprite_bundle: SpriteBundle,
+    pub goal: Goal,
+}
+
+impl LdtkEntity for GoalBundle {
+    fn bundle_entity(
+        _: &EntityInstance,
+        _: &LayerInstance,
+        _: Option<&Handle<Image>>,
+        _: Option<&TilesetDefinition>,
+        asset_server: &AssetServer,
+        _: &mut Assets<TextureAtlas>,
+    ) -> Self {
+        Self {
+            sprite_bundle: SpriteBundle {
+                texture: asset_server.load("Goal.png"),
+                ..Default::default()
+            },
+            goal: Goal::default(),
         }
     }
 }
