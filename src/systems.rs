@@ -175,6 +175,10 @@ pub fn load_world(mut commands: Commands, asset_server: Res<AssetServer>) {
             asset_server.load("audio/SFX_PlayerClimb_03.ogg"),
             asset_server.load("audio/SFX_PlayerClimb_04.ogg"),
         ],
+        player_hit_sfxs: vec![
+            asset_server.load("audio/SFX_Hit_01.ogg"),
+            asset_server.load("audio/SFX_Hit_02.ogg"),
+        ],
         falling_ice_sfx: asset_server.load("audio/SFX_FallingIce.ogg"),
     });
 }
@@ -312,7 +316,6 @@ pub fn move_player_from_input(
                 game_state.player_just_took_turn = true;
             }
 
-            // Apply gravity
             apply_gravity(
                 &tile_map,
                 &mut game_state,
@@ -320,8 +323,8 @@ pub fn move_player_from_input(
                 &mut player_health,
             );
 
+            let mut rng = rand::thread_rng();
             if !game_state.player_is_falling {
-                let mut rng = rand::thread_rng();
                 if direction.1 > 0. {
                     audio.play(
                         game_sounds.player_climb_up_sfxs
@@ -341,6 +344,12 @@ pub fn move_player_from_input(
                         .clone(),
                     );
                 }
+            } else if player_health.0 <= 0 {
+                audio.play(
+                    game_sounds.player_hit_sfxs
+                        [rng.gen_range(0..game_sounds.player_hit_sfxs.len())]
+                    .clone(),
+                );
             }
         }
     }
@@ -404,6 +413,8 @@ pub fn apply_damage_to_player(
     mut commands: Commands,
     mut player_query: Query<(&mut Health, &Damage, &Transform), With<Player>>,
     mut obstacle_query: Query<(Entity, &mut Health, &Damage, &Transform), Without<Player>>,
+    game_sounds: Res<GameSounds>,
+    audio: Res<Audio>,
 ) {
     println!("update_world");
 
@@ -424,6 +435,13 @@ pub fn apply_damage_to_player(
                 if obstacle_damage.0 > 0 && player_health.0 > 0 {
                     println!("obstacle dealt {} damage to the player", obstacle_damage.0);
                     player_health.0 -= obstacle_damage.0;
+
+                    let mut rng = rand::thread_rng();
+                    audio.play(
+                        game_sounds.player_hit_sfxs
+                            [rng.gen_range(0..game_sounds.player_hit_sfxs.len())]
+                        .clone(),
+                    );
                 }
             }
         }
