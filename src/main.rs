@@ -12,6 +12,7 @@ enum GameSystem {
     BuildTilemap,
     ApplyPlayerAdvantage,
     MovePlayer,
+    ApplySpeedTransparent,
     CheckForPlayerDeath,
     ApplyDamageToPlayer,
     SpawnFallingIceOverPlayer,
@@ -62,6 +63,13 @@ fn main() {
             SystemSet::on_update(components::AppState::InGame)
                 .label(GameSystem::MovePlayer)
                 .with_system(systems::move_player_from_input),
+        )
+        .add_system_set(
+            SystemSet::on_update(components::AppState::InGame)
+                .with_run_criteria(systems::run_if_player_speed_doubled)
+                .after(GameSystem::MovePlayer)
+                .label(GameSystem::ApplySpeedTransparent)
+                .with_system(systems::apply_speed_transparent_to_player),
         )
         .add_system_set(
             SystemSet::on_update(components::AppState::InGame)

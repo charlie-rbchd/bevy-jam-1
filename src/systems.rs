@@ -386,6 +386,35 @@ fn apply_gravity(
         }
     }
 }
+
+pub fn run_if_player_speed_doubled(player_speed_query: Query<&Speed, With<Player>>) -> ShouldRun {
+    if let Ok(player_speed) = player_speed_query.get_single() {
+        if (*player_speed).0 > 1 {
+            ShouldRun::Yes
+        } else {
+            ShouldRun::No
+        }
+    } else {
+        ShouldRun::No
+    }
+}
+
+pub fn apply_speed_transparent_to_player(
+    game_state: Res<GameState>,
+    player_speed_query: Query<&Speed, With<Player>>,
+    mut sprite_query: Query<&mut Sprite, With<Player>>,
+) {
+    if let Ok(mut sprite) = sprite_query.get_single_mut() {
+        if let Ok(player_speed) = player_speed_query.get_single() {
+            if game_state.player_num_actions_taken % player_speed.0 as u32 == 1 {
+                sprite.color.set_a(0.5);
+            } else {
+                sprite.color.set_a(1.0);
+            }
+        }
+    }
+}
+
 pub fn run_if_player_moved(game_state: Res<GameState>) -> ShouldRun {
     if game_state.player_just_took_turn {
         ShouldRun::Yes
