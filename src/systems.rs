@@ -262,6 +262,7 @@ pub fn move_player_from_input(
     if let Ok((player_speed, mut player_health, mut player_transform)) =
         player_query.get_single_mut()
     {
+        // Then move the player
         let mut direction = (0.0, 0.0);
         if input.just_pressed(KeyCode::A) || input.just_pressed(KeyCode::Left) {
             direction.0 -= 1.0;
@@ -286,13 +287,27 @@ pub fn move_player_from_input(
             true,
             new_position.y == current_position.y || going_down_while_falling,
         );
+
+        // Fetch tile where the player wants to go
         if let Some(tile) = tile_map
             .0
             .get(&get_nearest_tile_on_grid(new_position.x, new_position.y))
         {
+            // Fetch tile below this one
+            let mut wall_is_under = false;
+            if let Some(tile_below) = tile_map.0.get(&get_nearest_tile_on_grid(
+                new_position.x,
+                new_position.y - 1.0,
+            )) {
+                wall_is_under = match *tile_below {
+                    TileType::Wall => true,
+                    _ => false,
+                };
+            }
+
             match tile {
                 TileType::Wall => {
-                    new_position_is_valid.0 = false;
+                    new_position_is_valid.0 = wall_is_under;
                 }
                 TileType::Ladder | TileType::FallingIce => {
                     new_position_is_valid.1 = true;
