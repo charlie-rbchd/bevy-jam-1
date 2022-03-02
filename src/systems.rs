@@ -175,6 +175,7 @@ pub fn load_world(mut commands: Commands, asset_server: Res<AssetServer>) {
             asset_server.load("audio/SFX_PlayerClimb_03.ogg"),
             asset_server.load("audio/SFX_PlayerClimb_04.ogg"),
         ],
+        falling_ice_sfx: asset_server.load("audio/SFX_FallingIce.ogg"),
     });
 }
 
@@ -434,6 +435,8 @@ pub fn spawn_falling_ice_over_player(
     asset_server: Res<AssetServer>,
     mut tile_map: ResMut<TileMap>,
     player_query: Query<&Transform, With<Player>>,
+    game_sounds: Res<GameSounds>,
+    audio: Res<Audio>,
 ) {
     let transform = player_query.single();
     let (x, y) = get_nearest_tile_on_grid(transform.translation.x, transform.translation.y);
@@ -463,6 +466,9 @@ pub fn spawn_falling_ice_over_player(
                     damage: Damage(100),
                     falling_ice: FallingIce::default(),
                 });
+
+                audio.play(game_sounds.falling_ice_sfx.clone());
+
                 break;
             }
             Some(TileType::Ladder) => {} // go through
