@@ -266,6 +266,7 @@ pub fn move_player_from_input(
     if let Ok((player_speed, mut player_health, mut player_transform)) =
         player_query.get_single_mut()
     {
+        // Then move the player
         let mut direction = (0.0, 0.0);
         if input.just_pressed(KeyCode::A) || input.just_pressed(KeyCode::Left) {
             direction.0 -= 1.0;
@@ -290,13 +291,27 @@ pub fn move_player_from_input(
             true,
             new_position.y == current_position.y || going_down_while_falling,
         );
+
+        // Fetch tile where the player wants to go
         if let Some(tile) = tile_map
             .0
             .get(&get_nearest_tile_on_grid(new_position.x, new_position.y))
         {
+            // Fetch tile below this one
+            let mut wall_is_under = false;
+            if let Some(tile_below) = tile_map.0.get(&get_nearest_tile_on_grid(
+                new_position.x,
+                new_position.y - 1.0,
+            )) {
+                wall_is_under = match *tile_below {
+                    TileType::Wall => true,
+                    _ => false,
+                };
+            }
+
             match tile {
                 TileType::Wall => {
-                    new_position_is_valid.0 = false;
+                    new_position_is_valid.0 = wall_is_under;
                 }
                 TileType::Ladder | TileType::FallingIce => {
                     new_position_is_valid.1 = true;
@@ -395,6 +410,35 @@ fn apply_gravity(
         }
     }
 }
+
+pub fn run_if_player_speed_doubled(player_speed_query: Query<&Speed, With<Player>>) -> ShouldRun {
+    if let Ok(player_speed) = player_speed_query.get_single() {
+        if (*player_speed).0 > 1 {
+            ShouldRun::Yes
+        } else {
+            ShouldRun::No
+        }
+    } else {
+        ShouldRun::No
+    }
+}
+
+pub fn apply_speed_transparent_to_player(
+    game_state: Res<GameState>,
+    player_speed_query: Query<&Speed, With<Player>>,
+    mut sprite_query: Query<&mut Sprite, With<Player>>,
+) {
+    if let Ok(mut sprite) = sprite_query.get_single_mut() {
+        if let Ok(player_speed) = player_speed_query.get_single() {
+            if game_state.player_num_actions_taken % player_speed.0 as u32 == 1 {
+                sprite.color.set_a(0.5);
+            } else {
+                sprite.color.set_a(1.0);
+            }
+        }
+    }
+}
+
 pub fn run_if_player_moved(game_state: Res<GameState>) -> ShouldRun {
     if game_state.player_just_took_turn {
         ShouldRun::Yes
