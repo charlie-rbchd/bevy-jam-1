@@ -214,6 +214,8 @@ pub fn teardown_world(mut commands: Commands, entity_query: Query<Entity>) {
     }
     // unload audio
     commands.remove_resource::<GameSounds>();
+    // unload textures
+    commands.remove_resource::<GameTextures>();
 }
 
 pub fn apply_player_advantage_on_player_added(
