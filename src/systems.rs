@@ -518,7 +518,7 @@ pub fn apply_damage_to_player(
     mut commands: Commands,
     mut player_query: Query<(&mut Health, &Damage, &mut Transform), With<Player>>,
     mut obstacle_query: Query<
-        (Entity, &Blocking, &mut Health, &Damage, &Transform),
+        (Entity, Option<&Blocking>, &mut Health, &Damage, &Transform),
         Without<Player>,
     >,
     game_state: Res<GameState>,
@@ -549,7 +549,7 @@ pub fn apply_damage_to_player(
                     }
                 }
 
-                if !obstacle_just_died && obstacle_blocking.0 {
+                if !obstacle_just_died && obstacle_blocking.unwrap_or(&Blocking(false)).0 {
                     // obstacle wasn't fully killed, push back player
                     player_transform.translation = game_state.player_previous_pos;
                 }
