@@ -122,9 +122,9 @@
 			"requiredTags": [],
 			"excludedTags": [],
 			"intGridValues": [
-				{ "value": 1, "identifier": "Wall", "color": "#000000" },
-				{ "value": 2, "identifier": "Ladder", "color": "#FF0000" },
-				{ "value": 3, "identifier": "FallingIce", "color": "#00EAFF" }
+				{ "value": 1, "identifier": "Wall", "color": "#AEBCE9" },
+				{ "value": 2, "identifier": "Ladder", "color": "#AEBCE9" },
+				{ "value": 3, "identifier": "FallingIce", "color": "#AEBCE9" }
 			],
 			"autoTilesetDefUid": null,
 			"autoRuleGroups": [],
