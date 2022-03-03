@@ -484,30 +484,22 @@ fn apply_gravity(
     }
 }
 
-pub fn run_if_player_speed_doubled(player_speed_query: Query<&Speed, With<Player>>) -> ShouldRun {
-    if let Ok(player_speed) = player_speed_query.get_single() {
-        if (*player_speed).0 > 1 {
-            ShouldRun::Yes
-        } else {
-            ShouldRun::No
-        }
-    } else {
-        ShouldRun::No
-    }
-}
-
-pub fn apply_speed_transparent_to_player(
+pub fn apply_player_visual_effects(
+    asset_server: Res<AssetServer>,
     game_state: Res<GameState>,
-    player_speed_query: Query<&Speed, With<Player>>,
-    mut sprite_query: Query<&mut Sprite, With<Player>>,
+    mut player_query: Query<(&Speed, &mut Sprite, &mut Handle<Image>), With<Player>>,
 ) {
-    if let Ok(mut sprite) = sprite_query.get_single_mut() {
-        if let Ok(player_speed) = player_speed_query.get_single() {
-            if game_state.player_num_actions_taken % player_speed.0 as u32 == 1 {
-                sprite.color.set_a(0.5);
-            } else {
-                sprite.color.set_a(1.0);
-            }
+    if let Ok((player_speed, mut sprite, mut texture)) = player_query.get_single_mut() {
+        if game_state.player_num_actions_taken % player_speed.0 as u32 == 1 {
+            sprite.color.set_a(0.5);
+        } else {
+            sprite.color.set_a(1.0);
+        }
+
+        if game_state.player_is_falling {
+            *texture = asset_server.load("PlayerFalling.png");
+        } else {
+            *texture = asset_server.load("Player.png");
         }
     }
 }
