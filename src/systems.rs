@@ -196,6 +196,7 @@ pub fn load_world(mut commands: Commands, asset_server: Res<AssetServer>) {
             asset_server.load("audio/SFX_Hit_01.ogg"),
             asset_server.load("audio/SFX_Hit_02.ogg"),
         ],
+        player_attack_sfx: asset_server.load("audio/SFX_Attack.ogg"),
         falling_ice_sfx: asset_server.load("audio/SFX_FallingIce.ogg"),
         goal_sfx: asset_server.load("audio/SFX_Goal.ogg"),
     });
@@ -543,6 +544,9 @@ pub fn apply_damage_to_player(
                 if player_damage.0 > 0 && obstacle_health.0 > 0 {
                     println!("player dealt {} damage to an obstacle", player_damage.0);
                     obstacle_health.0 -= player_damage.0;
+
+                    audio.play(game_sounds.player_attack_sfx.clone());
+
                     if obstacle_health.0 <= 0 {
                         commands.entity(obstacle_entity).despawn();
                         obstacle_just_died = true;
