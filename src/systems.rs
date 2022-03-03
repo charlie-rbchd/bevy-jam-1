@@ -491,18 +491,34 @@ fn apply_gravity(
 }
 
 pub fn apply_player_visual_effects(
+    tile_map: Res<TileMap>,
     game_state: Res<GameState>,
     game_textures: Res<GameTextures>,
-    mut player_query: Query<(&Speed, &mut Sprite, &mut Handle<Image>), With<Player>>,
+    mut player_query: Query<(&Speed, &Transform, &mut Sprite, &mut Handle<Image>), With<Player>>,
 ) {
-    if let Ok((player_speed, mut sprite, mut texture)) = player_query.get_single_mut() {
+    if let Ok((player_speed, player_transform, mut sprite, mut texture)) =
+        player_query.get_single_mut()
+    {
         if game_state.player_num_actions_taken % player_speed.0 as u32 == 1 {
             sprite.color.set_a(0.5);
         } else {
             sprite.color.set_a(1.0);
         }
 
-        if game_state.player_is_falling {
+        let mut tile_above_player = get_nearest_tile_on_grid(
+            player_transform.translation.x,
+            player_transform.translation.y,
+        );
+        tile_above_player.1 += 1;
+
+        let player_is_climbing = match tile_map.0.get(&tile_above_player) {
+            Some(TileType::Ladder) => true,
+            _ => false,
+        };
+
+        if player_is_climbing {
+            *texture = game_textures.player_climbing.clone();
+        } else if game_state.player_is_falling {
             *texture = game_textures.player_falling.clone();
         } else {
             *texture = game_textures.player.clone();
