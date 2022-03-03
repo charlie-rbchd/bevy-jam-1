@@ -525,8 +525,6 @@ pub fn apply_damage_to_player(
     game_sounds: Res<GameSounds>,
     audio: Res<Audio>,
 ) {
-    println!("update_world");
-
     if let Ok((mut player_health, player_damage, mut player_transform)) =
         player_query.get_single_mut()
     {
