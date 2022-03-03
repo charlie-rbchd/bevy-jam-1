@@ -13,8 +13,7 @@ enum GameSystem {
     ApplyPlayerAdvantage,
     MovePlayer,
     ApplySpeedTransparent,
-    CheckForPlayerDeath,
-    CheckPlayerReachedGoal,
+    CheckForExitStates,
     ApplyDamageToPlayer,
     SpawnFallingIceOverPlayer,
     MoveFallingIce,
@@ -103,14 +102,10 @@ fn main() {
         .add_system_set(
             SystemSet::on_update(components::AppState::InGame)
                 .after(GameSystem::MovePlayer)
-                .label(GameSystem::CheckForPlayerDeath)
-                .with_system(systems::check_for_player_death),
-        )
-        .add_system_set(
-            SystemSet::on_update(components::AppState::InGame)
-                .after(GameSystem::CheckForPlayerDeath)
-                .label(GameSystem::CheckPlayerReachedGoal)
-                .with_system(systems::check_player_reached_goal),
+                .label(GameSystem::CheckForExitStates)
+                .with_system(systems::check_for_player_death)
+                .with_system(systems::check_player_reached_goal)
+                .with_system(systems::exit_on_esc),
         )
         .add_system_set(
             SystemSet::on_exit(components::AppState::InGame)

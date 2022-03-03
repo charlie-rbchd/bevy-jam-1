@@ -413,6 +413,17 @@ fn return_to_main_menu(
     (*app_state).set(AppState::MainMenu).unwrap();
 }
 
+pub fn exit_on_esc(
+    input: Res<Input<KeyCode>>,
+    mut tile_map: ResMut<TileMap>,
+    mut app_state: ResMut<State<AppState>>,
+    mut game_state: ResMut<GameState>,
+) {
+    if input.just_pressed(KeyCode::Escape) {
+        return_to_main_menu(&mut tile_map, &mut app_state, &mut game_state);
+    }
+}
+
 pub fn check_for_player_death(
     mut tile_map: ResMut<TileMap>,
     mut app_state: ResMut<State<AppState>>,
