@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 57,
+	"nextUid": 58,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -782,6 +782,31 @@
 			"pivotX": 0,
 			"pivotY": 0,
 			"fieldDefs": []
+		},
+		{
+			"identifier": "Goal",
+			"uid": 57,
+			"tags": [],
+			"width": 64,
+			"height": 64,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#FF0074",
+			"renderMode": "Rectangle",
+			"showName": true,
+			"tilesetId": null,
+			"tileId": null,
+			"tileRenderMode": "FitInside",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": []
 		}
 	], "tilesets": [
 		{
@@ -896,37 +921,6 @@
 						},
 						{
 							"__identifier": "Obstacle",
-							"__grid": [2,2],
-							"__pivot": [0,0],
-							"__tile": null,
-							"width": 64,
-							"height": 64,
-							"defUid": 20,
-							"px": [128,128],
-							"fieldInstances": [
-								{
-									"__identifier": "Speed",
-									"__value": null,
-									"__type": "Int",
-									"defUid": 21,
-									"realEditorValues": [null]
-								},
-								{ "__identifier": "Health", "__value": 100, "__type": "Int", "defUid": 22, "realEditorValues": [] },
-								{ "__identifier": "Damage", "__value": 0, "__type": "Int", "defUid": 23, "realEditorValues": [] },
-								{
-									"__identifier": "Type",
-									"__value": "ObstacleType1",
-									"__type": "LocalEnum.ObstacleType",
-									"defUid": 25,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["ObstacleType1"]
-									}]
-								}
-							]
-						},
-						{
-							"__identifier": "Obstacle",
 							"__grid": [12,14],
 							"__pivot": [0,0],
 							"__tile": null,
@@ -976,6 +970,17 @@
 							"height": 64,
 							"defUid": 26,
 							"px": [448,256],
+							"fieldInstances": []
+						},
+						{
+							"__identifier": "Goal",
+							"__grid": [2,2],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 64,
+							"height": 64,
+							"defUid": 57,
+							"px": [128,128],
 							"fieldInstances": []
 						}
 					]
