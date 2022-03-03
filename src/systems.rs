@@ -318,7 +318,9 @@ pub fn move_player_from_input(
             true,
             new_position.y == current_position.y || going_down_while_falling,
         );
-        direction.1 = 0.0; // gravity will take care of it
+        if going_down_while_falling {
+            direction.1 = 0.0; // gravity will take care of it
+        }
 
         // Fetch tile where the player wants to go
         if let Some(tile) = tile_map
