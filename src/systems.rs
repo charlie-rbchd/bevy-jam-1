@@ -365,6 +365,7 @@ pub fn move_player_from_input(
             apply_gravity(
                 &tile_map,
                 &mut game_state,
+                current_position.clone(),
                 &mut player_transform,
                 &mut player_health,
             );
@@ -446,6 +447,7 @@ pub fn check_player_reached_goal(
 fn apply_gravity(
     tile_map: &Res<TileMap>,
     game_state: &mut ResMut<GameState>,
+    current_position: Vec3,
     player_transform: &mut Transform,
     mut player_health: &mut Health,
 ) {
@@ -459,7 +461,11 @@ fn apply_gravity(
     };
 
     if game_state.player_is_falling {
-        player_transform.translation.y -= TILE_SIZE as f32;
+        // Only go down if we're not going down already
+        if player_transform.translation.y == current_position.y {
+            player_transform.translation.y -= TILE_SIZE as f32;
+        }
+
         if !is_position_in_bounds(player_transform.translation.y) {
             player_health.0 = 0; // the player has fallen to their death
         }
