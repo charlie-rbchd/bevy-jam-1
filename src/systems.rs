@@ -286,7 +286,7 @@ pub fn move_player_from_input(
     game_sounds: Res<GameSounds>,
     audio: Res<Audio>,
 ) {
-    game_state.player_just_took_turn = false;
+    game_state.world_should_update = false;
 
     if let Ok((player_speed, mut player_health, mut player_transform)) =
         player_query.get_single_mut()
@@ -366,7 +366,7 @@ pub fn move_player_from_input(
 
             game_state.player_num_actions_taken += 1;
             if game_state.player_num_actions_taken % player_speed.0 as u32 == 0 {
-                game_state.player_just_took_turn = true;
+                game_state.world_should_update = true;
             }
 
             apply_gravity(
@@ -472,10 +472,25 @@ fn apply_gravity(
     let next_position = player_transform.translation.clone();
     let mut tile_under_player = get_nearest_tile_on_grid(next_position.x, next_position.y);
     tile_under_player.1 -= 1;
+    let tile_type_under = tile_map.0.get(&tile_under_player);
 
-    game_state.player_is_falling = match tile_map.0.get(&tile_under_player) {
+    let mut tile_on_player = tile_under_player;
+    tile_on_player.1 += 1;
+    let tile_type_on = tile_map.0.get(&tile_on_player);
+
+    game_state.player_is_falling = match tile_type_under {
         Some(_) => false,
         None => true,
+    };
+
+    // Keep falling on the top ladder tile
+    game_state.player_is_falling |= match tile_type_under {
+        Some(TileType::Ladder) => true,
+        Some(_) => false,
+        None => true,
+    } && match tile_type_on {
+        None => true,
+        Some(_) => false,
     };
 
     if game_state.player_is_falling {
@@ -505,20 +520,41 @@ pub fn apply_player_visual_effects(
             sprite.color.set_a(1.0);
         }
 
-        let mut tile_above_player = get_nearest_tile_on_grid(
+        let player_tile_pos = get_nearest_tile_on_grid(
             player_transform.translation.x,
             player_transform.translation.y,
         );
-        tile_above_player.1 += 1;
+        let under_tile_pos = (player_tile_pos.0, player_tile_pos.1 - 1);
+        let over_tile_pos = (player_tile_pos.0, player_tile_pos.1 + 1);
 
-        let player_is_climbing = match tile_map.0.get(&tile_above_player) {
+        // Climing if it's not the top ladder tile
+        let player_is_climbing = match tile_map.0.get(&player_tile_pos) {
+            Some(TileType::Ladder) => true,
+            _ => false,
+        } && match tile_map.0.get(&over_tile_pos) {
             Some(TileType::Ladder) => true,
             _ => false,
         };
 
+        // Falling if there's nothing underneath
+        let mut player_is_falling = match tile_map.0.get(&under_tile_pos) {
+            Some(_) => false,
+            None => true,
+        };
+
+        // But also if it's the top ladder tile
+        player_is_falling |= match tile_map.0.get(&player_tile_pos) {
+            None => true,
+            Some(_) => false,
+        } && match tile_map.0.get(&under_tile_pos) {
+            Some(TileType::Ladder) => true,
+            Some(_) => false,
+            None => false,
+        };
+
         if player_is_climbing {
             *texture = game_textures.player_climbing.clone();
-        } else if game_state.player_is_falling {
+        } else if player_is_falling {
             *texture = game_textures.player_falling.clone();
         } else {
             *texture = game_textures.player.clone();
@@ -526,8 +562,8 @@ pub fn apply_player_visual_effects(
     }
 }
 
-pub fn run_if_player_moved(game_state: Res<GameState>) -> ShouldRun {
-    if game_state.player_just_took_turn {
+pub fn run_if_world_should_update(game_state: Res<GameState>) -> ShouldRun {
+    if game_state.world_should_update {
         ShouldRun::Yes
     } else {
         ShouldRun::No

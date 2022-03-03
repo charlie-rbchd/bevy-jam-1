@@ -48,7 +48,7 @@ pub enum Advantage {
 
 pub struct GameState {
     pub player_previous_pos: Vec3,
-    pub player_just_took_turn: bool,
+    pub world_should_update: bool,
     pub player_num_actions_taken: u32,
     pub player_is_falling: bool,
     pub player_advantage: Option<Advantage>,
@@ -58,7 +58,7 @@ impl Default for GameState {
     fn default() -> Self {
         Self {
             player_previous_pos: Vec3::ZERO,
-            player_just_took_turn: false,
+            world_should_update: false,
             player_num_actions_taken: 0,
             player_is_falling: false,
             player_advantage: None,

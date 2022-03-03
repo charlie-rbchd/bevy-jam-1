@@ -79,21 +79,21 @@ fn main() {
         )
         .add_system_set(
             SystemSet::on_update(components::AppState::InGame)
-                .with_run_criteria(systems::run_if_player_moved)
+                .with_run_criteria(systems::run_if_world_should_update)
                 .after(GameSystem::MovePlayer)
                 .label(GameSystem::MoveFallingIce)
                 .with_system(systems::move_falling_ice),
         )
         .add_system_set(
             SystemSet::on_update(components::AppState::InGame)
-                .with_run_criteria(systems::run_if_player_moved)
+                .with_run_criteria(systems::run_if_world_should_update)
                 .after(GameSystem::MoveFallingIce)
                 .label(GameSystem::ApplyDamageToPlayer)
                 .with_system(systems::apply_damage_to_player),
         )
         .add_system_set(
             SystemSet::on_update(components::AppState::InGame)
-                .with_run_criteria(systems::run_if_player_moved)
+                .with_run_criteria(systems::run_if_world_should_update)
                 .after(GameSystem::MoveFallingIce)
                 .label(GameSystem::SpawnFallingIceOverPlayer)
                 .with_system(systems::spawn_falling_ice_over_player), // spawn ice now for the next turn
