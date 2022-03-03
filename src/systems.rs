@@ -516,6 +516,10 @@ pub fn apply_damage_to_player(
                 if !obstacle_just_died && obstacle_blocking.0 {
                     // obstacle wasn't fully killed, push back player
                     player_transform.translation = game_state.player_previous_pos;
+                    if game_state.player_is_falling {
+                        // compensate for gravity when falling onto the obstacle
+                        player_transform.translation.y -= TILE_SIZE as f32;
+                    }
                 }
 
                 if obstacle_damage.0 > 0 && player_health.0 > 0 {
