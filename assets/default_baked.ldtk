@@ -336,11 +336,7 @@
 				"averageColors": "19790000000009980000fabe0000000052ee0eb500000000000058ae00000eb569be00000000d8ad00000ace000068ae000058ae69be58ae69be679d000049be69be59be0000f79d"
 			}
 		}
-	], "enums": [{ "identifier": "ObstacleType", "uid": 24, "values": [
-		{ "id": "ObstacleType0", "tileId": null, "color": 6278371, "__tileSrcRect": null },
-		{ "id": "ObstacleType1", "tileId": null, "color": 2236212, "__tileSrcRect": null },
-		{ "id": "ObstacleType2", "tileId": null, "color": 16777215, "__tileSrcRect": null }
-	], "iconTilesetUid": null, "externalRelPath": null, "externalFileChecksum": null }], "externalEnums": [], "levelFields": [] },
+	], "enums": [{ "identifier": "ObstacleType", "uid": 24, "values": [ { "id": "ObstacleBlock", "tileId": null, "color": 6278371, "__tileSrcRect": null }, { "id": "ObstacleSpike", "tileId": null, "color": 2236212, "__tileSrcRect": null } ], "iconTilesetUid": null, "externalRelPath": null, "externalFileChecksum": null }], "externalEnums": [], "levelFields": [] },
 	"levels": [
 		{
 			"identifier": "Level_0",
@@ -412,16 +408,28 @@
 									"defUid": 21,
 									"realEditorValues": [null]
 								},
-								{ "__identifier": "Health", "__value": 100, "__type": "Int", "defUid": 22, "realEditorValues": [] },
-								{ "__identifier": "Damage", "__value": 0, "__type": "Int", "defUid": 23, "realEditorValues": [] },
+								{
+									"__identifier": "Health",
+									"__value": 0,
+									"__type": "Int",
+									"defUid": 22,
+									"realEditorValues": [{ "id": "V_Int", "params": [0] }]
+								},
+								{
+									"__identifier": "Damage",
+									"__value": 100,
+									"__type": "Int",
+									"defUid": 23,
+									"realEditorValues": [{ "id": "V_Int", "params": [100] }]
+								},
 								{
 									"__identifier": "Type",
-									"__value": "ObstacleType0",
+									"__value": "ObstacleSpike",
 									"__type": "LocalEnum.ObstacleType",
 									"defUid": 25,
 									"realEditorValues": [{
 										"id": "V_String",
-										"params": ["ObstacleType0"]
+										"params": ["ObstacleSpike"]
 									}]
 								}
 							]
@@ -443,16 +451,28 @@
 									"defUid": 21,
 									"realEditorValues": [null]
 								},
-								{ "__identifier": "Health", "__value": 100, "__type": "Int", "defUid": 22, "realEditorValues": [] },
-								{ "__identifier": "Damage", "__value": 0, "__type": "Int", "defUid": 23, "realEditorValues": [] },
+								{
+									"__identifier": "Health",
+									"__value": 0,
+									"__type": "Int",
+									"defUid": 22,
+									"realEditorValues": [{ "id": "V_Int", "params": [0] }]
+								},
+								{
+									"__identifier": "Damage",
+									"__value": 100,
+									"__type": "Int",
+									"defUid": 23,
+									"realEditorValues": [{ "id": "V_Int", "params": [100] }]
+								},
 								{
 									"__identifier": "Type",
-									"__value": "ObstacleType1",
+									"__value": "ObstacleSpike",
 									"__type": "LocalEnum.ObstacleType",
 									"defUid": 25,
 									"realEditorValues": [{
 										"id": "V_String",
-										"params": ["ObstacleType1"]
+										"params": ["ObstacleSpike"]
 									}]
 								}
 							]
@@ -478,12 +498,12 @@
 								{ "__identifier": "Damage", "__value": 0, "__type": "Int", "defUid": 23, "realEditorValues": [] },
 								{
 									"__identifier": "Type",
-									"__value": "ObstacleType2",
+									"__value": "ObstacleBlock",
 									"__type": "LocalEnum.ObstacleType",
 									"defUid": 25,
 									"realEditorValues": [{
 										"id": "V_String",
-										"params": ["ObstacleType2"]
+										"params": ["ObstacleBlock"]
 									}]
 								}
 							]
