@@ -324,6 +324,7 @@ pub fn move_player_from_input(
             && new_position_is_valid.0
             && new_position_is_valid.1
         {
+            game_state.player_previous_pos = player_transform.translation;
             player_transform.translation = new_position;
 
             game_state.player_num_actions_taken += 1;
@@ -479,25 +480,43 @@ fn entities_are_overlapping(t1: &Transform, t2: &Transform) -> bool {
 
 pub fn apply_damage_to_player(
     mut commands: Commands,
-    mut player_query: Query<(&mut Health, &Damage, &Transform), With<Player>>,
-    mut obstacle_query: Query<(Entity, &mut Health, &Damage, &Transform), Without<Player>>,
+    mut player_query: Query<(&mut Health, &Damage, &mut Transform), With<Player>>,
+    mut obstacle_query: Query<
+        (Entity, &Blocking, &mut Health, &Damage, &Transform),
+        Without<Player>,
+    >,
+    game_state: Res<GameState>,
     game_sounds: Res<GameSounds>,
     audio: Res<Audio>,
 ) {
     println!("update_world");
 
-    if let Ok((mut player_health, player_damage, player_transform)) = player_query.get_single_mut()
+    if let Ok((mut player_health, player_damage, mut player_transform)) =
+        player_query.get_single_mut()
     {
-        for (obstacle_entity, mut obstacle_health, obstacle_damage, obstacle_transform) in
-            obstacle_query.iter_mut()
+        for (
+            obstacle_entity,
+            obstacle_blocking,
+            mut obstacle_health,
+            obstacle_damage,
+            obstacle_transform,
+        ) in obstacle_query.iter_mut()
         {
-            if entities_are_overlapping(player_transform, obstacle_transform) {
+            if entities_are_overlapping(&player_transform, obstacle_transform) {
+                let mut obstacle_just_died = false;
                 if player_damage.0 > 0 && obstacle_health.0 > 0 {
                     println!("player dealt {} damage to an obstacle", player_damage.0);
                     obstacle_health.0 -= player_damage.0;
                     if obstacle_health.0 <= 0 {
                         commands.entity(obstacle_entity).despawn();
+                        obstacle_just_died = true;
                     }
+                }
+
+                if !obstacle_just_died && obstacle_blocking.0 {
+                    // obstacle wasn't fully killed, push back player
+                    println!("HELLO");
+                    player_transform.translation = game_state.player_previous_pos;
                 }
 
                 if obstacle_damage.0 > 0 && player_health.0 > 0 {

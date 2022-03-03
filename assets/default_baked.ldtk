@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 87,
+	"nextUid": 89,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -184,26 +184,6 @@
 			"pivotY": 0,
 			"fieldDefs": [
 				{
-					"identifier": "Speed",
-					"__type": "Int",
-					"uid": 21,
-					"type": "F_Int",
-					"isArray": false,
-					"canBeNull": false,
-					"arrayMinLength": null,
-					"arrayMaxLength": null,
-					"editorDisplayMode": "Hidden",
-					"editorDisplayPos": "Above",
-					"editorAlwaysShow": false,
-					"editorCutLongValues": true,
-					"min": 0,
-					"max": 2,
-					"regex": null,
-					"acceptFileTypes": null,
-					"defaultOverride": { "id": "V_Float", "params": [0] },
-					"textLanguageMode": null
-				},
-				{
 					"identifier": "Health",
 					"__type": "Int",
 					"uid": 22,
@@ -241,6 +221,29 @@
 					"regex": null,
 					"acceptFileTypes": null,
 					"defaultOverride": { "id": "V_Int", "params": [0] },
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "IsBlocking",
+					"__type": "Bool",
+					"uid": 87,
+					"type": "F_Bool",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": {
+						"id": "V_Bool",
+						"params": [ false ]
+					},
 					"textLanguageMode": null
 				},
 				{
@@ -402,13 +405,6 @@
 							"px": [640,576],
 							"fieldInstances": [
 								{
-									"__identifier": "Speed",
-									"__value": null,
-									"__type": "Int",
-									"defUid": 21,
-									"realEditorValues": [null]
-								},
-								{
 									"__identifier": "Health",
 									"__value": 0,
 									"__type": "Int",
@@ -431,7 +427,8 @@
 										"id": "V_String",
 										"params": ["ObstacleSpike"]
 									}]
-								}
+								},
+								{ "__identifier": "IsBlocking", "__value": false, "__type": "Bool", "defUid": 87, "realEditorValues": [] }
 							]
 						},
 						{
@@ -445,13 +442,6 @@
 							"px": [192,896],
 							"fieldInstances": [
 								{
-									"__identifier": "Speed",
-									"__value": null,
-									"__type": "Int",
-									"defUid": 21,
-									"realEditorValues": [null]
-								},
-								{
 									"__identifier": "Health",
 									"__value": 0,
 									"__type": "Int",
@@ -474,7 +464,8 @@
 										"id": "V_String",
 										"params": ["ObstacleSpike"]
 									}]
-								}
+								},
+								{ "__identifier": "IsBlocking", "__value": false, "__type": "Bool", "defUid": 87, "realEditorValues": [] }
 							]
 						},
 						{
@@ -487,13 +478,6 @@
 							"defUid": 20,
 							"px": [768,896],
 							"fieldInstances": [
-								{
-									"__identifier": "Speed",
-									"__value": null,
-									"__type": "Int",
-									"defUid": 21,
-									"realEditorValues": [null]
-								},
 								{ "__identifier": "Health", "__value": 100, "__type": "Int", "defUid": 22, "realEditorValues": [] },
 								{ "__identifier": "Damage", "__value": 0, "__type": "Int", "defUid": 23, "realEditorValues": [] },
 								{
@@ -504,6 +488,16 @@
 									"realEditorValues": [{
 										"id": "V_String",
 										"params": ["ObstacleBlock"]
+									}]
+								},
+								{
+									"__identifier": "IsBlocking",
+									"__value": true,
+									"__type": "Bool",
+									"defUid": 87,
+									"realEditorValues": [{
+										"id": "V_Bool",
+										"params": [ true ]
 									}]
 								}
 							]

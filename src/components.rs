@@ -39,6 +39,7 @@ pub enum Advantage {
 }
 
 pub struct GameState {
+    pub player_previous_pos: Vec3,
     pub player_just_took_turn: bool,
     pub player_num_actions_taken: u32,
     pub player_is_falling: bool,
@@ -48,6 +49,7 @@ pub struct GameState {
 impl Default for GameState {
     fn default() -> Self {
         Self {
+            player_previous_pos: Vec3::ZERO,
             player_just_took_turn: false,
             player_num_actions_taken: 0,
             player_is_falling: false,
@@ -103,14 +105,17 @@ impl LdtkEntity for PlayerBundle {
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component)]
 pub struct Obstacle;
 
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component)]
+pub struct Blocking(pub bool);
+
 #[derive(Clone, Bundle)]
 pub struct ObstacleBundle {
     #[bundle]
     pub sprite_bundle: SpriteBundle,
     pub obstacle: Obstacle,
-    pub speed: Speed,
     pub damage: Damage,
     pub health: Health,
+    pub blocking: Blocking,
 }
 
 impl LdtkEntity for ObstacleBundle {
@@ -122,14 +127,14 @@ impl LdtkEntity for ObstacleBundle {
         asset_server: &AssetServer,
         _: &mut Assets<TextureAtlas>,
     ) -> Self {
-        let mut speed = Speed(1);
-        if let Some(speed_field) = entity_instance
+        let mut blocking = Blocking(false);
+        if let Some(blocking_field) = entity_instance
             .field_instances
             .iter()
-            .find(|f| f.identifier == "Speed".to_string())
+            .find(|f| f.identifier == "IsBlocking".to_string())
         {
-            if let FieldValue::Int(Some(speed_value)) = speed_field.value {
-                speed = Speed(speed_value as u8);
+            if let FieldValue::Bool(blocking_value) = blocking_field.value {
+                blocking = Blocking(blocking_value);
             }
         }
 
@@ -172,9 +177,9 @@ impl LdtkEntity for ObstacleBundle {
                 ..Default::default()
             },
             obstacle: Obstacle::default(),
-            speed,
             damage,
             health,
+            blocking,
         }
     }
 }
