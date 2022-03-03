@@ -299,7 +299,16 @@ pub fn move_player_from_input(
             direction.1 -= 1.0;
         }
 
-        let current_position = &player_transform.translation;
+        // reset falling state now that player moved (last frame)
+        let current_position = player_transform.translation.clone();
+        let mut tile_under_player =
+            get_nearest_tile_on_grid(current_position.x, current_position.y);
+        tile_under_player.1 -= 1;
+        game_state.player_is_falling = match tile_map.0.get(&tile_under_player) {
+            Some(_) => false,
+            None => true,
+        };
+
         let mut new_position = current_position.clone();
         new_position.x += TILE_SIZE as f32 * direction.0;
         new_position.y += TILE_SIZE as f32 * direction.1;
@@ -309,6 +318,7 @@ pub fn move_player_from_input(
             true,
             new_position.y == current_position.y || going_down_while_falling,
         );
+        direction.1 = 0.0; // gravity will take care of it
 
         // Fetch tile where the player wants to go
         if let Some(tile) = tile_map
@@ -338,7 +348,7 @@ pub fn move_player_from_input(
         }
 
         if is_position_in_bounds(new_position.x)
-            && new_position != *current_position
+            && new_position != current_position
             && new_position_is_valid.0
             && new_position_is_valid.1
         {
@@ -434,11 +444,11 @@ pub fn check_player_reached_goal(
 fn apply_gravity(
     tile_map: &Res<TileMap>,
     game_state: &mut ResMut<GameState>,
-    mut player_transform: &mut Transform,
+    player_transform: &mut Transform,
     mut player_health: &mut Health,
 ) {
-    let current_position = &player_transform.translation;
-    let mut tile_under_player = get_nearest_tile_on_grid(current_position.x, current_position.y);
+    let next_position = player_transform.translation.clone();
+    let mut tile_under_player = get_nearest_tile_on_grid(next_position.x, next_position.y);
     tile_under_player.1 -= 1;
 
     game_state.player_is_falling = match tile_map.0.get(&tile_under_player) {
@@ -447,11 +457,8 @@ fn apply_gravity(
     };
 
     if game_state.player_is_falling {
-        let mut new_position = current_position.clone();
-        new_position.y -= TILE_SIZE as f32;
-
-        player_transform.translation = new_position;
-        if !is_position_in_bounds(new_position.y) {
+        player_transform.translation.y -= TILE_SIZE as f32;
+        if !is_position_in_bounds(player_transform.translation.y) {
             player_health.0 = 0; // the player has fallen to their death
         }
     }
