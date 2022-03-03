@@ -180,6 +180,7 @@ pub fn load_world(mut commands: Commands, asset_server: Res<AssetServer>) {
             asset_server.load("audio/SFX_Hit_02.ogg"),
         ],
         falling_ice_sfx: asset_server.load("audio/SFX_FallingIce.ogg"),
+        goal_sfx: asset_server.load("audio/SFX_Goal.ogg"),
     });
 }
 
@@ -400,10 +401,13 @@ pub fn check_player_reached_goal(
     mut tile_map: ResMut<TileMap>,
     mut app_state: ResMut<State<AppState>>,
     mut game_state: ResMut<GameState>,
+    game_sounds: Res<GameSounds>,
+    audio: Res<Audio>,
 ) {
     if let Ok(player_transform) = player_query.get_single() {
         if let Ok(goal_transform) = goal_query.get_single() {
             if entities_are_overlapping(player_transform, goal_transform) {
+                audio.play(game_sounds.goal_sfx.clone());
                 return_to_main_menu(&mut tile_map, &mut app_state, &mut game_state);
             }
         }

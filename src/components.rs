@@ -30,6 +30,7 @@ pub struct GameSounds {
     pub player_climb_down_sfxs: Vec<Handle<AudioSource>>,
     pub player_hit_sfxs: Vec<Handle<AudioSource>>,
     pub falling_ice_sfx: Handle<AudioSource>,
+    pub goal_sfx: Handle<AudioSource>,
 }
 
 pub enum Advantage {
