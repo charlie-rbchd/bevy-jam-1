@@ -24,6 +24,12 @@ pub struct UiSounds {
     pub button_clicked_sfx: Handle<AudioSource>,
 }
 
+pub struct GameTextures {
+    pub player: Handle<Image>,
+    pub player_climbing: Handle<Image>,
+    pub player_falling: Handle<Image>,
+}
+
 pub struct GameSounds {
     pub player_movement_sfxs: Vec<Handle<AudioSource>>,
     pub player_climb_up_sfxs: Vec<Handle<AudioSource>>,

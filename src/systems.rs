@@ -200,6 +200,12 @@ pub fn load_world(mut commands: Commands, asset_server: Res<AssetServer>) {
         falling_ice_sfx: asset_server.load("audio/SFX_FallingIce.ogg"),
         goal_sfx: asset_server.load("audio/SFX_Goal.ogg"),
     });
+    // preload textures
+    commands.insert_resource(GameTextures {
+        player: asset_server.load("Player.png"),
+        player_climbing: asset_server.load("PlayerClimbing.png"),
+        player_falling: asset_server.load("PlayerFalling.png"),
+    });
 }
 
 pub fn teardown_world(mut commands: Commands, entity_query: Query<Entity>) {
@@ -485,8 +491,8 @@ fn apply_gravity(
 }
 
 pub fn apply_player_visual_effects(
-    asset_server: Res<AssetServer>,
     game_state: Res<GameState>,
+    game_textures: Res<GameTextures>,
     mut player_query: Query<(&Speed, &mut Sprite, &mut Handle<Image>), With<Player>>,
 ) {
     if let Ok((player_speed, mut sprite, mut texture)) = player_query.get_single_mut() {
@@ -497,9 +503,9 @@ pub fn apply_player_visual_effects(
         }
 
         if game_state.player_is_falling {
-            *texture = asset_server.load("PlayerFalling.png");
+            *texture = game_textures.player_falling.clone();
         } else {
-            *texture = asset_server.load("Player.png");
+            *texture = game_textures.player.clone();
         }
     }
 }
