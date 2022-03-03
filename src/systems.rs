@@ -515,7 +515,6 @@ pub fn apply_damage_to_player(
 
                 if !obstacle_just_died && obstacle_blocking.0 {
                     // obstacle wasn't fully killed, push back player
-                    println!("HELLO");
                     player_transform.translation = game_state.player_previous_pos;
                 }
 
