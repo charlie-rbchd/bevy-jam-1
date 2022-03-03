@@ -28,7 +28,7 @@ pub fn setup_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
         .spawn_bundle(NodeBundle {
             style: Style {
-                size: Size::new(Val::Percent(100.0), Val::Percent(60.0)),
+                size: Size::new(Val::Percent(100.0), Val::Percent(75.0)),
                 align_self: AlignSelf::Center,
                 align_items: AlignItems::Center,
                 justify_content: JustifyContent::SpaceEvenly,
@@ -45,10 +45,27 @@ pub fn setup_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
                     ..Default::default()
                 },
                 text: Text::with_section(
+                    "THE LAST CLIMB",
+                    TextStyle {
+                        font: asset_server.load("fonts/Minecraft.ttf"),
+                        font_size: 62.0,
+                        color: Color::rgb_u8(234, 237, 194),
+                    },
+                    Default::default(),
+                ),
+                ..Default::default()
+            });
+
+            parent.spawn_bundle(TextBundle {
+                style: Style {
+                    margin: Rect::all(Val::Px(50.0)),
+                    ..Default::default()
+                },
+                text: Text::with_section(
                     "CHOOSE AN UNFAIR ADVANTAGE",
                     TextStyle {
                         font: asset_server.load("fonts/Minecraft.ttf"),
-                        font_size: 50.0,
+                        font_size: 42.0,
                         color: Color::rgb(0.9, 0.9, 0.9),
                     },
                     Default::default(),
