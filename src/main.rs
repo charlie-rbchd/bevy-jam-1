@@ -33,7 +33,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugin(LdtkPlugin)
         .add_plugin(AudioPlugin)
-        .insert_resource(LevelSelection::Uid(0))
+        .insert_resource(LevelSelection::Index(0))
         .insert_resource(components::TileMap::default())
         .insert_resource(components::GameState::default())
         // .insert_resource(ReportExecutionOrderAmbiguities)
@@ -75,7 +75,6 @@ fn main() {
         )
         .add_system_set(
             SystemSet::on_update(components::AppState::InGame)
-                .after(GameSystem::MovePlayer)
                 .label(GameSystem::FitCamera)
                 .with_system(systems::fit_camera_inside_current_level),
         )

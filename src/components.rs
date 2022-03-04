@@ -50,6 +50,7 @@ pub struct GameState {
     pub player_num_actions_taken: u32,
     pub player_is_falling: bool,
     pub player_advantage: Option<Advantage>,
+    pub level_index: usize,
 }
 
 impl Default for GameState {
@@ -60,6 +61,7 @@ impl Default for GameState {
             player_num_actions_taken: 0,
             player_is_falling: false,
             player_advantage: None,
+            level_index: 0,
         }
     }
 }

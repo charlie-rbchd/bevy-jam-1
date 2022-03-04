@@ -8,6 +8,7 @@ use rand::Rng;
 const SPEED_BUTTON_LABEL: &str = "SPEED";
 const STRENGTH_BUTTON_LABEL: &str = "STRENGTH";
 const HEALTH_BUTTON_LABEL: &str = "HEALTH";
+const NUM_LEVELS: usize = 2;
 
 pub fn setup(asset_server: Res<AssetServer>, audio: Res<Audio>) {
     asset_server.watch_for_changes().unwrap();
@@ -442,17 +443,20 @@ pub fn check_for_player_death(
 pub fn check_player_reached_goal(
     goal_query: Query<&Transform, With<Goal>>,
     player_query: Query<&Transform, (With<Player>, Changed<Transform>)>,
-    mut tile_map: ResMut<TileMap>,
-    mut app_state: ResMut<State<AppState>>,
+    mut _tile_map: ResMut<TileMap>,
+    mut _app_state: ResMut<State<AppState>>,
     mut game_state: ResMut<GameState>,
     game_sounds: Res<GameSounds>,
     audio: Res<Audio>,
+    mut level_selection: ResMut<LevelSelection>,
 ) {
     if let Ok(player_transform) = player_query.get_single() {
         if let Ok(goal_transform) = goal_query.get_single() {
             if entities_are_overlapping(player_transform, goal_transform) {
                 audio.play(game_sounds.goal_sfx.clone());
-                return_to_main_menu(&mut tile_map, &mut app_state, &mut game_state);
+                game_state.level_index = (game_state.level_index + 1) % NUM_LEVELS;
+                *level_selection = LevelSelection::Index(game_state.level_index);
+                // return_to_main_menu(&mut tile_map, &mut app_state, &mut game_state);
             }
         }
     }
@@ -637,40 +641,43 @@ pub fn spawn_falling_ice_over_player(
     game_sounds: Res<GameSounds>,
     audio: Res<Audio>,
 ) {
-    let transform = player_query.single();
-    let (x, y) = get_nearest_tile_on_grid(transform.translation.x, transform.translation.y);
+    if let Ok(transform) = player_query.get_single() {
+        let (x, y) = get_nearest_tile_on_grid(transform.translation.x, transform.translation.y);
 
-    for j in y..WORLD_SIZE {
-        let tile_to_inspect = (x, j);
+        for j in y..WORLD_SIZE {
+            let tile_to_inspect = (x, j);
 
-        let mut found_ice = false;
+            let mut found_ice = false;
 
-        // Find matching ice
-        for (entity, ice_transform) in ice_query.iter() {
-            let ice_tile =
-                get_nearest_tile_on_grid(ice_transform.translation.x, ice_transform.translation.y);
-            if ice_tile == tile_to_inspect {
-                println!("Found ice!");
-                commands
-                    .entity(entity)
-                    .insert(FallingIce::default())
-                    .remove::<StaticIce>();
+            // Find matching ice
+            for (entity, ice_transform) in ice_query.iter() {
+                let ice_tile = get_nearest_tile_on_grid(
+                    ice_transform.translation.x,
+                    ice_transform.translation.y,
+                );
+                if ice_tile == tile_to_inspect {
+                    println!("Found ice!");
+                    commands
+                        .entity(entity)
+                        .insert(FallingIce::default())
+                        .remove::<StaticIce>();
 
-                audio.play(game_sounds.falling_ice_sfx.clone());
-                found_ice = true;
-            }
-        }
-
-        if found_ice {
-            break;
-        } else {
-            match tile_map.0.get(&tile_to_inspect) {
-                Some(TileType::Wall) => {
-                    println!("Found wall!");
-                    break;
+                    audio.play(game_sounds.falling_ice_sfx.clone());
+                    found_ice = true;
                 }
-                Some(TileType::Ladder) => {} // go through
-                None => {}                   // keep going
+            }
+
+            if found_ice {
+                break;
+            } else {
+                match tile_map.0.get(&tile_to_inspect) {
+                    Some(TileType::Wall) => {
+                        println!("Found wall!");
+                        break;
+                    }
+                    Some(TileType::Ladder) => {} // go through
+                    None => {}                   // keep going
+                }
             }
         }
     }
@@ -708,6 +715,7 @@ pub fn fit_camera_inside_current_level(
     >,
     level_selection: Res<LevelSelection>,
     ldtk_levels: Res<Assets<LdtkLevel>>,
+    game_state: Res<GameState>,
 ) {
     if let Ok(Transform {
         translation: player_translation,
@@ -721,7 +729,7 @@ pub fn fit_camera_inside_current_level(
         for (level_transform, level_handle) in level_query.iter() {
             if let Some(ldtk_level) = ldtk_levels.get(level_handle) {
                 let level = &ldtk_level.level;
-                if level_selection.is_match(&0, &level) {
+                if level_selection.is_match(&game_state.level_index, &level) {
                     let level_ratio = level.px_wid as f32 / ldtk_level.level.px_hei as f32;
 
                     orthographic_projection.scaling_mode = bevy::render::camera::ScalingMode::None;
