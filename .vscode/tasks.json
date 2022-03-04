@@ -33,6 +33,20 @@
       "problemMatcher": [],
       "label": "rust: copy assets for debugging",
       "dependsOn": ["rust: cargo build"]
+    },
+    {
+      "type": "shell",
+      "windows": {
+        "command": "cp",
+        "args": [
+          "assets",
+          "target/debug",
+          "-r",
+        ]
+      },
+      "problemMatcher": [],
+      "label": "rust(bash): copy assets for debugging",
+      "dependsOn": ["rust: cargo build"]
     }
   ]
 }
