@@ -122,6 +122,73 @@ pub fn close_menu(mut commands: Commands, entity_query: Query<Entity>) {
     commands.remove_resource::<UiSounds>();
 }
 
+pub fn setup_credits(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.spawn_bundle(UiCameraBundle::default());
+    commands.spawn_bundle(NodeBundle {
+        style: Style {
+            size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
+            position_type: PositionType::Absolute,
+            ..Default::default()
+        },
+        color: Color::rgb_u8(174, 188, 233).into(),
+        ..Default::default()
+    });
+    commands
+        .spawn_bundle(NodeBundle {
+            style: Style {
+                size: Size::new(Val::Percent(100.0), Val::Percent(75.0)),
+                align_self: AlignSelf::Center,
+                align_items: AlignItems::Center,
+                justify_content: JustifyContent::SpaceEvenly,
+                flex_direction: FlexDirection::ColumnReverse,
+                ..Default::default()
+            },
+            color: Color::NONE.into(),
+            ..Default::default()
+        })
+        .with_children(|parent| {
+            parent.spawn_bundle(TextBundle {
+                style: Style {
+                    margin: Rect::all(Val::Px(50.0)),
+                    ..Default::default()
+                },
+                text: Text::with_section(
+                    "YOU REACHED THE TOP!",
+                    TextStyle {
+                        font: asset_server.load("fonts/Minecraft.ttf"),
+                        font_size: 62.0,
+                        color: Color::rgb_u8(234, 237, 194),
+                    },
+                    Default::default(),
+                ),
+                ..Default::default()
+            });
+
+            parent.spawn_bundle(TextBundle {
+                style: Style {
+                    margin: Rect::all(Val::Px(50.0)),
+                    ..Default::default()
+                },
+                text: Text::with_section(
+                    "PRESS ESC TO RETURN TO THE MAIN MENU",
+                    TextStyle {
+                        font: asset_server.load("fonts/Minecraft.ttf"),
+                        font_size: 42.0,
+                        color: Color::rgb(0.9, 0.9, 0.9),
+                    },
+                    Default::default(),
+                ),
+                ..Default::default()
+            });
+        });
+}
+
+pub fn close_credits(mut commands: Commands, entity_query: Query<Entity>) {
+    for e in entity_query.iter() {
+        commands.entity(e).despawn();
+    }
+}
+
 pub fn handle_ui_buttons(
     mut interaction_query: Query<
         (&Interaction, &mut UiColor, &Children),
@@ -458,7 +525,7 @@ pub fn check_player_reached_goal(
     goal_query: Query<&Transform, With<Goal>>,
     player_query: Query<&Transform, (With<Player>, Changed<Transform>)>,
     mut tile_map: ResMut<TileMap>,
-    mut _app_state: ResMut<State<AppState>>,
+    mut app_state: ResMut<State<AppState>>,
     mut game_state: ResMut<GameState>,
     game_sounds: Res<GameSounds>,
     audio: Res<Audio>,
@@ -468,10 +535,16 @@ pub fn check_player_reached_goal(
         if let Ok(goal_transform) = goal_query.get_single() {
             if entities_are_overlapping(player_transform, goal_transform) {
                 audio.play(game_sounds.goal_sfx.clone());
-                game_state.level_index = (game_state.level_index + 1) % NUM_LEVELS;
+
+                game_state.level_index += 1;
+
                 tile_map.0.clear();
-                *level_selection = LevelSelection::Index(game_state.level_index);
-                // return_to_main_menu(&mut tile_map, &mut app_state, &mut game_state);
+                if game_state.level_index == NUM_LEVELS {
+                    *game_state = GameState::default();
+                    app_state.set(AppState::Credits).unwrap();
+                } else {
+                    *level_selection = LevelSelection::Index(game_state.level_index);
+                }
             }
         }
     }

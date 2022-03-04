@@ -125,5 +125,14 @@ fn main() {
         .add_system_set(
             SystemSet::on_exit(components::AppState::MainMenu).with_system(systems::close_menu),
         )
+        .add_system_set(
+            SystemSet::on_enter(components::AppState::Credits).with_system(systems::setup_credits),
+        )
+        .add_system_set(
+            SystemSet::on_update(components::AppState::Credits).with_system(systems::exit_on_esc),
+        )
+        .add_system_set(
+            SystemSet::on_exit(components::AppState::Credits).with_system(systems::close_credits),
+        )
         .run();
 }

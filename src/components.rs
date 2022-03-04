@@ -16,6 +16,7 @@ pub struct TileMap(pub HashMap<(i32, i32), TileType>);
 pub enum AppState {
     MainMenu,
     InGame,
+    Credits,
 }
 
 pub struct UiSounds {
