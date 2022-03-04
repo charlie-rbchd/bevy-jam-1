@@ -208,15 +208,12 @@ pub fn handle_ui_buttons(
 
                 match text.sections[0].value.as_str() {
                     SPEED_BUTTON_LABEL => {
-                        println!("player chose speed");
                         game_state.player_advantage = Some(Advantage::Speed);
                     }
                     STRENGTH_BUTTON_LABEL => {
-                        println!("player chose strength");
                         game_state.player_advantage = Some(Advantage::Strength);
                     }
                     HEALTH_BUTTON_LABEL => {
-                        println!("player chose health");
                         game_state.player_advantage = Some(Advantage::Health);
                     }
                     _ => panic!("unknown button"),
@@ -703,7 +700,6 @@ pub fn apply_damage_to_player(
             if entities_are_overlapping(&player_transform, obstacle_transform) {
                 let mut obstacle_just_died = false;
                 if player_damage.0 > 0 && obstacle_health.0 > 0 {
-                    println!("player dealt {} damage to an obstacle", player_damage.0);
                     obstacle_health.0 -= player_damage.0;
 
                     audio.play(game_sounds.player_attack_sfx.clone());
@@ -715,12 +711,10 @@ pub fn apply_damage_to_player(
                 }
 
                 if !obstacle_just_died && obstacle_blocking.unwrap_or(&Blocking(false)).0 {
-                    // obstacle wasn't fully killed, push back player
                     player_transform.translation = game_state.player_previous_pos;
                 }
 
                 if obstacle_damage.0 > 0 && player_health.0 > 0 {
-                    println!("obstacle dealt {} damage to the player", obstacle_damage.0);
                     player_health.0 -= obstacle_damage.0;
 
                     let mut rng = rand::thread_rng();
@@ -758,7 +752,6 @@ pub fn spawn_falling_ice_over_player(
                     ice_transform.translation.y,
                 );
                 if ice_tile == tile_to_inspect {
-                    println!("Found ice!");
                     commands
                         .entity(entity)
                         .insert(FallingIce::default())
@@ -774,7 +767,6 @@ pub fn spawn_falling_ice_over_player(
             } else {
                 match tile_map.0.get(&tile_to_inspect) {
                     Some(TileType::Wall) => {
-                        println!("Found wall!");
                         break;
                     }
                     Some(TileType::Ladder) => {} // go through
