@@ -30,6 +30,10 @@ fn main() {
 
     App::new()
         .insert_resource(ClearColor(Color::rgb_u8(174, 188, 233)))
+        .insert_resource(WindowDescriptor {
+            resizable: false,
+            ..Default::default()
+        })
         .add_plugins(DefaultPlugins)
         .add_plugin(LdtkPlugin)
         .add_plugin(AudioPlugin)
