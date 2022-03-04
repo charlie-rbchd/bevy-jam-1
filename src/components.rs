@@ -8,7 +8,6 @@ use std::string::String;
 pub enum TileType {
     Wall,
     Ladder,
-    FallingIce,
 }
 
 #[derive(Default)]
@@ -117,7 +116,7 @@ pub struct Obstacle;
 pub struct Blocking(pub bool);
 
 #[derive(Clone, Bundle)]
-pub struct ObstacleBundle {
+pub struct ObstacleSpikeBundle {
     #[bundle]
     pub sprite_bundle: SpriteBundle,
     pub obstacle: Obstacle,
@@ -126,7 +125,7 @@ pub struct ObstacleBundle {
     pub blocking: Blocking,
 }
 
-impl LdtkEntity for ObstacleBundle {
+impl LdtkEntity for ObstacleSpikeBundle {
     fn bundle_entity(
         entity_instance: &EntityInstance,
         _: &LayerInstance,
@@ -168,20 +167,74 @@ impl LdtkEntity for ObstacleBundle {
             }
         }
 
-        let mut texture_filename = String::new();
-        if let Some(type_field) = entity_instance
+        Self {
+            sprite_bundle: SpriteBundle {
+                texture: asset_server.load("ObstacleSpike.png"),
+                ..Default::default()
+            },
+            obstacle: Obstacle::default(),
+            damage,
+            health,
+            blocking,
+        }
+    }
+}
+
+#[derive(Clone, Bundle)]
+pub struct ObstacleBlockBundle {
+    #[bundle]
+    pub sprite_bundle: SpriteBundle,
+    pub obstacle: Obstacle,
+    pub damage: Damage,
+    pub health: Health,
+    pub blocking: Blocking,
+}
+
+impl LdtkEntity for ObstacleBlockBundle {
+    fn bundle_entity(
+        entity_instance: &EntityInstance,
+        _: &LayerInstance,
+        _: Option<&Handle<Image>>,
+        _: Option<&TilesetDefinition>,
+        asset_server: &AssetServer,
+        _: &mut Assets<TextureAtlas>,
+    ) -> Self {
+        let mut blocking = Blocking(false);
+        if let Some(blocking_field) = entity_instance
             .field_instances
             .iter()
-            .find(|f| f.identifier == "Type".to_string())
+            .find(|f| f.identifier == "IsBlocking".to_string())
         {
-            if let FieldValue::Enum(Some(type_value)) = &type_field.value {
-                texture_filename = format!("{}.png", type_value);
+            if let FieldValue::Bool(blocking_value) = blocking_field.value {
+                blocking = Blocking(blocking_value);
+            }
+        }
+
+        let mut damage = Damage(0);
+        if let Some(damage_field) = entity_instance
+            .field_instances
+            .iter()
+            .find(|f| f.identifier == "Damage".to_string())
+        {
+            if let FieldValue::Int(Some(damage_value)) = damage_field.value {
+                damage = Damage(damage_value);
+            }
+        }
+
+        let mut health = Health(100);
+        if let Some(health_field) = entity_instance
+            .field_instances
+            .iter()
+            .find(|f| f.identifier == "Health".to_string())
+        {
+            if let FieldValue::Int(Some(health_value)) = health_field.value {
+                health = Health(health_value);
             }
         }
 
         Self {
             sprite_bundle: SpriteBundle {
-                texture: asset_server.load(&texture_filename),
+                texture: asset_server.load("ObstacleBlock.png"),
                 ..Default::default()
             },
             obstacle: Obstacle::default(),
@@ -250,11 +303,37 @@ pub struct FallingIceTileBundle {
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component)]
 pub struct FallingIce;
 
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component)]
+pub struct StaticIce;
+
 #[derive(Clone, Bundle)]
 pub struct FallingIceBundle {
     #[bundle]
     pub sprite_bundle: SpriteBundle,
     pub damage: Damage,
     pub health: Health,
-    pub falling_ice: FallingIce,
+    pub static_ice: StaticIce,
+    //pub falling_ice: FallingIce,
+}
+
+impl LdtkEntity for FallingIceBundle {
+    fn bundle_entity(
+        _: &EntityInstance,
+        _: &LayerInstance,
+        _: Option<&Handle<Image>>,
+        _: Option<&TilesetDefinition>,
+        asset_server: &AssetServer,
+        _: &mut Assets<TextureAtlas>,
+    ) -> Self {
+        Self {
+            sprite_bundle: SpriteBundle {
+                texture: asset_server.load("FallingIce.png"),
+                ..Default::default()
+            },
+            health: Health(1),
+            damage: Damage(100),
+            static_ice: StaticIce::default(),
+            //falling_ice: FallingIce::default(),
+        }
+    }
 }

@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 58,
+	"nextUid": 66,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -627,7 +627,7 @@
 			"fieldDefs": []
 		},
 		{
-			"identifier": "Obstacle",
+			"identifier": "ObstacleSpike",
 			"uid": 20,
 			"tags": [],
 			"width": 64,
@@ -639,10 +639,10 @@
 			"lineOpacity": 1,
 			"hollow": false,
 			"color": "#94D9B3",
-			"renderMode": "Rectangle",
+			"renderMode": "Tile",
 			"showName": true,
-			"tilesetId": null,
-			"tileId": null,
+			"tilesetId": 26,
+			"tileId": 20,
 			"tileRenderMode": "Stretch",
 			"maxCount": 0,
 			"limitScope": "PerLevel",
@@ -650,26 +650,6 @@
 			"pivotX": 0,
 			"pivotY": 0,
 			"fieldDefs": [
-				{
-					"identifier": "Speed",
-					"__type": "Int",
-					"uid": 21,
-					"type": "F_Int",
-					"isArray": false,
-					"canBeNull": false,
-					"arrayMinLength": null,
-					"arrayMaxLength": null,
-					"editorDisplayMode": "Hidden",
-					"editorDisplayPos": "Above",
-					"editorAlwaysShow": false,
-					"editorCutLongValues": true,
-					"min": 0,
-					"max": 2,
-					"regex": null,
-					"acceptFileTypes": null,
-					"defaultOverride": { "id": "V_Float", "params": [0] },
-					"textLanguageMode": null
-				},
 				{
 					"identifier": "Health",
 					"__type": "Int",
@@ -711,10 +691,10 @@
 					"textLanguageMode": null
 				},
 				{
-					"identifier": "Type",
-					"__type": "LocalEnum.ObstacleType",
-					"uid": 25,
-					"type": { "id": "F_Enum", "params": [24] },
+					"identifier": "IsBlocking",
+					"__type": "Bool",
+					"uid": 58,
+					"type": "F_Bool",
 					"isArray": false,
 					"canBeNull": false,
 					"arrayMinLength": null,
@@ -733,6 +713,95 @@
 			]
 		},
 		{
+			"identifier": "ObstacleBlock",
+			"uid": 60,
+			"tags": [],
+			"width": 64,
+			"height": 64,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#94D9B3",
+			"renderMode": "Tile",
+			"showName": true,
+			"tilesetId": 26,
+			"tileId": 22,
+			"tileRenderMode": "Stretch",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": [
+				{
+					"identifier": "Health",
+					"__type": "Int",
+					"uid": 61,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": 0,
+					"max": 10000,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": { "id": "V_Int", "params": [100] },
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "Damage",
+					"__type": "Int",
+					"uid": 62,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": 0,
+					"max": 10000,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": { "id": "V_Int", "params": [0] },
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "IsBlocking",
+					"__type": "Bool",
+					"uid": 64,
+					"type": "F_Bool",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": {
+						"id": "V_Bool",
+						"params": [ true ]
+					},
+					"textLanguageMode": null
+				}
+			]
+		},
+		{
 			"identifier": "FallingIce",
 			"uid": 26,
 			"tags": [],
@@ -745,10 +814,10 @@
 			"lineOpacity": 1,
 			"hollow": false,
 			"color": "#5EE0F1",
-			"renderMode": "Rectangle",
+			"renderMode": "Tile",
 			"showName": true,
-			"tilesetId": null,
-			"tileId": null,
+			"tilesetId": 26,
+			"tileId": 14,
 			"tileRenderMode": "FitInside",
 			"maxCount": 0,
 			"limitScope": "PerLevel",
@@ -770,10 +839,10 @@
 			"lineOpacity": 1,
 			"hollow": false,
 			"color": "#FF0074",
-			"renderMode": "Rectangle",
+			"renderMode": "Tile",
 			"showName": true,
-			"tilesetId": null,
-			"tileId": null,
+			"tilesetId": 65,
+			"tileId": 0,
 			"tileRenderMode": "FitInside",
 			"maxCount": 0,
 			"limitScope": "PerLevel",
@@ -802,12 +871,25 @@
 				"opaqueTiles": "000001000000000000000000000000000001",
 				"averageColors": "1979196900000aa70000fabe197900003bed0ec200000000000058ae4bed0ec269be00000000b8ae2cef0ace4bbc68ae69be58ae48be68ae68ae68ad98ae48ae58ae59be0000f79d"
 			}
+		},
+		{
+			"__cWid": 1,
+			"__cHei": 1,
+			"identifier": "Goal",
+			"uid": 65,
+			"relPath": "Goal.png",
+			"pxWid": 64,
+			"pxHei": 64,
+			"tileGridSize": 64,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": { "opaqueTiles": "0", "averageColors": "2bbd" }
 		}
-	], "enums": [{ "identifier": "ObstacleType", "uid": 24, "values": [
-		{ "id": "ObstacleType0", "tileId": null, "color": 6278371, "__tileSrcRect": null },
-		{ "id": "ObstacleType1", "tileId": null, "color": 2236212, "__tileSrcRect": null },
-		{ "id": "ObstacleType2", "tileId": null, "color": 16777215, "__tileSrcRect": null }
-	], "iconTilesetUid": null, "externalRelPath": null, "externalFileChecksum": null }], "externalEnums": [], "levelFields": [] },
+	], "enums": [], "externalEnums": [], "levelFields": [] },
 	"levels": [
 		{
 			"identifier": "Level_0",
@@ -863,72 +945,37 @@
 							"fieldInstances": []
 						},
 						{
-							"__identifier": "Obstacle",
+							"__identifier": "ObstacleSpike",
 							"__grid": [10,9],
 							"__pivot": [0,0],
-							"__tile": null,
+							"__tile": { "tilesetUid": 26, "srcRect": [128,192,64,64] },
 							"width": 64,
 							"height": 64,
 							"defUid": 20,
 							"px": [640,576],
 							"fieldInstances": [
 								{
-									"__identifier": "Speed",
-									"__value": null,
+									"__identifier": "Health",
+									"__value": 0,
 									"__type": "Int",
-									"defUid": 21,
-									"realEditorValues": [null]
+									"defUid": 22,
+									"realEditorValues": [{ "id": "V_Int", "params": [0] }]
 								},
-								{ "__identifier": "Health", "__value": 100, "__type": "Int", "defUid": 22, "realEditorValues": [] },
-								{ "__identifier": "Damage", "__value": 0, "__type": "Int", "defUid": 23, "realEditorValues": [] },
 								{
-									"__identifier": "Type",
-									"__value": "ObstacleType0",
-									"__type": "LocalEnum.ObstacleType",
-									"defUid": 25,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["ObstacleType0"]
-									}]
-								}
-							]
-						},
-						{
-							"__identifier": "Obstacle",
-							"__grid": [12,14],
-							"__pivot": [0,0],
-							"__tile": null,
-							"width": 64,
-							"height": 64,
-							"defUid": 20,
-							"px": [768,896],
-							"fieldInstances": [
-								{
-									"__identifier": "Speed",
-									"__value": null,
+									"__identifier": "Damage",
+									"__value": 100,
 									"__type": "Int",
-									"defUid": 21,
-									"realEditorValues": [null]
+									"defUid": 23,
+									"realEditorValues": [{ "id": "V_Int", "params": [100] }]
 								},
-								{ "__identifier": "Health", "__value": 100, "__type": "Int", "defUid": 22, "realEditorValues": [] },
-								{ "__identifier": "Damage", "__value": 0, "__type": "Int", "defUid": 23, "realEditorValues": [] },
-								{
-									"__identifier": "Type",
-									"__value": "ObstacleType2",
-									"__type": "LocalEnum.ObstacleType",
-									"defUid": 25,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["ObstacleType2"]
-									}]
-								}
+								{ "__identifier": "IsBlocking", "__value": false, "__type": "Bool", "defUid": 58, "realEditorValues": [] }
 							]
 						},
 						{
 							"__identifier": "Goal",
 							"__grid": [2,2],
 							"__pivot": [0,0],
-							"__tile": null,
+							"__tile": { "tilesetUid": 65, "srcRect": [0,0,64,64] },
 							"width": 64,
 							"height": 64,
 							"defUid": 57,
@@ -939,7 +986,7 @@
 							"__identifier": "FallingIce",
 							"__grid": [7,7],
 							"__pivot": [0,0],
-							"__tile": null,
+							"__tile": { "tilesetUid": 26, "srcRect": [128,128,64,64] },
 							"width": 64,
 							"height": 64,
 							"defUid": 26,
@@ -950,12 +997,27 @@
 							"__identifier": "FallingIce",
 							"__grid": [7,3],
 							"__pivot": [0,0],
-							"__tile": null,
+							"__tile": { "tilesetUid": 26, "srcRect": [128,128,64,64] },
 							"width": 64,
 							"height": 64,
 							"defUid": 26,
 							"px": [448,192],
 							"fieldInstances": []
+						},
+						{
+							"__identifier": "ObstacleBlock",
+							"__grid": [12,14],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 26, "srcRect": [256,192,64,64] },
+							"width": 64,
+							"height": 64,
+							"defUid": 60,
+							"px": [768,896],
+							"fieldInstances": [
+								{ "__identifier": "Health", "__value": 100, "__type": "Int", "defUid": 61, "realEditorValues": [] },
+								{ "__identifier": "Damage", "__value": 0, "__type": "Int", "defUid": 62, "realEditorValues": [] },
+								{ "__identifier": "IsBlocking", "__value": true, "__type": "Bool", "defUid": 64, "realEditorValues": [] }
+							]
 						}
 					]
 				},

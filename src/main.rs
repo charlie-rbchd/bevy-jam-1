@@ -42,7 +42,9 @@ fn main() {
         .register_ldtk_int_cell::<components::ClimableTileBundle>(2)
         .register_ldtk_int_cell::<components::FallingIceTileBundle>(3)
         .register_ldtk_entity::<components::PlayerBundle>("Player")
-        .register_ldtk_entity::<components::ObstacleBundle>("Obstacle")
+        .register_ldtk_entity::<components::ObstacleSpikeBundle>("ObstacleSpike")
+        .register_ldtk_entity::<components::ObstacleBlockBundle>("ObstacleBlock")
+        .register_ldtk_entity::<components::FallingIceBundle>("FallingIce")
         .register_ldtk_entity::<components::GoalBundle>("Goal")
         .add_startup_system(systems::setup)
         .add_system_set(

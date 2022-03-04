@@ -252,7 +252,7 @@ pub fn build_tilemap_with_added_tiles(
     mut tile_map: ResMut<TileMap>,
     wall_query: Query<&Transform, Added<WallTile>>,
     climbable_query: Query<&Transform, Added<ClimbableTile>>,
-    falling_ice_query: Query<&Transform, Added<FallingIceTile>>,
+    ice_query: Query<&Transform, Added<StaticIce>>,
 ) {
     for wall_transform in wall_query.iter() {
         tile_map.0.insert(
@@ -269,22 +269,17 @@ pub fn build_tilemap_with_added_tiles(
             TileType::Ladder,
         );
     }
-
-    // Add entities for falling ice
-    // They'll start moving once play is underneath
-    for transform in falling_ice_query.iter() {
-        tile_map.0.insert(
-            get_nearest_tile_on_grid(transform.translation.x, transform.translation.y),
-            TileType::FallingIce,
-        );
-    }
 }
 
 pub fn move_player_from_input(
     input: Res<Input<KeyCode>>,
     tile_map: Res<TileMap>,
     mut game_state: ResMut<GameState>,
-    mut player_query: Query<(&Speed, &mut Health, &mut Transform), With<Player>>,
+    mut player_query: Query<
+        (&Speed, &mut Health, &mut Transform),
+        (With<Player>, Without<FallingIce>),
+    >,
+    falling_ice_query: Query<&Transform, (With<FallingIce>, Without<Player>)>,
     game_sounds: Res<GameSounds>,
     audio: Res<Audio>,
 ) {
@@ -348,12 +343,22 @@ pub fn move_player_from_input(
                 };
             }
 
+            let mut new_pos_is_ice = false;
+            for t in falling_ice_query.iter() {
+                if t.translation == new_position {
+                    new_pos_is_ice = true;
+                }
+            }
+
             match tile {
                 TileType::Wall => {
                     new_position_is_valid.0 = wall_is_under;
                 }
-                TileType::Ladder | TileType::FallingIce => {
+                TileType::Ladder => {
                     new_position_is_valid.1 = true;
+                }
+                _ => {
+                    new_position_is_valid.1 = new_pos_is_ice;
                 }
             }
         }
@@ -637,9 +642,9 @@ pub fn apply_damage_to_player(
 
 pub fn spawn_falling_ice_over_player(
     mut commands: Commands,
-    asset_server: Res<AssetServer>,
-    mut tile_map: ResMut<TileMap>,
+    tile_map: ResMut<TileMap>,
     player_query: Query<&Transform, With<Player>>,
+    ice_query: Query<(Entity, &Transform), With<StaticIce>>,
     game_sounds: Res<GameSounds>,
     audio: Res<Audio>,
 ) {
@@ -648,36 +653,38 @@ pub fn spawn_falling_ice_over_player(
 
     for j in y..WORLD_SIZE {
         let tile_to_inspect = (x, j);
-        match tile_map.0.get(&tile_to_inspect) {
-            Some(TileType::Wall) => {
-                // println!("Found wall!");
-                break;
-            }
-            Some(TileType::FallingIce) => {
-                // println!("Found ice!");
-                tile_map.0.remove(&tile_to_inspect);
 
-                let sprite_pos = tile_pos_to_sprite_pos(x, j);
-                commands.spawn_bundle(FallingIceBundle {
-                    sprite_bundle: SpriteBundle {
-                        texture: asset_server.load("FallingIce.png"),
-                        transform: Transform {
-                            translation: sprite_pos,
-                            ..Default::default()
-                        },
-                        ..Default::default()
-                    },
-                    health: Health(1),
-                    damage: Damage(100),
-                    falling_ice: FallingIce::default(),
-                });
+        let mut found_ice = false;
+
+        // Find matching ice
+        for (entity, ice_transform) in ice_query.iter() {
+            let ice_tile =
+                get_nearest_tile_on_grid(ice_transform.translation.x, ice_transform.translation.y);
+            if ice_tile == tile_to_inspect {
+                println!("Found ice!");
+                commands
+                    .entity(entity)
+                    .insert(FallingIce::default())
+                    .remove::<StaticIce>();
 
                 audio.play(game_sounds.falling_ice_sfx.clone());
-
-                break;
+                found_ice = true;
             }
-            Some(TileType::Ladder) => {} // go through
-            None => {}                   // keep going
+        }
+
+        if found_ice {
+            // let sprite_pos = tile_pos_to_sprite_pos(x, j);
+            // oh no
+            break;
+        } else {
+            match tile_map.0.get(&tile_to_inspect) {
+                Some(TileType::Wall) => {
+                    println!("Found wall!");
+                    break;
+                }
+                Some(TileType::Ladder) => {} // go through
+                None => {}                   // keep going
+            }
         }
     }
 }
