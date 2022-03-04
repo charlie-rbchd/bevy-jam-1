@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 91,
+	"nextUid": 93,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -175,7 +175,31 @@
 			"intGridValues": [ { "value": 1, "identifier": "Wall", "color": "#000000" }, { "value": 2, "identifier": "Ladder", "color": "#FF0000" } ],
 			"autoTilesetDefUid": 26,
 			"autoRuleGroups": [
-				{ "uid": 86, "name": "UnderRope", "active": true, "collapsed": false, "isOptional": false, "rules": [
+				{ "uid": 91, "name": "SingleOverRope", "active": true, "collapsed": true, "isOptional": false, "rules": [
+					{
+						"uid": 92,
+						"active": true,
+						"size": 5,
+						"tileIds": [17],
+						"chance": 1,
+						"breakOnMatch": true,
+						"pattern": [0,0,0,0,0,0,0,0,0,0,0,-1000001,1,-1000001,0,0,0,2,0,0,0,1,2,0,0],
+						"flipX": false,
+						"flipY": false,
+						"xModulo": 1,
+						"yModulo": 1,
+						"checker": "None",
+						"tileMode": "Single",
+						"pivotX": 0,
+						"pivotY": 0,
+						"outOfBoundsValue": null,
+						"perlinActive": false,
+						"perlinSeed": 6345891,
+						"perlinScale": 0.2,
+						"perlinOctaves": 2
+					}
+				] },
+				{ "uid": 86, "name": "UnderRope", "active": true, "collapsed": true, "isOptional": false, "rules": [
 					{
 						"uid": 87,
 						"active": true,
@@ -1761,13 +1785,13 @@
 						},
 						{
 							"__identifier": "FallingIce",
-							"__grid": [6,1],
+							"__grid": [6,2],
 							"__pivot": [0,0],
 							"__tile": { "tilesetUid": 26, "srcRect": [128,128,64,64] },
 							"width": 64,
 							"height": 64,
 							"defUid": 26,
-							"px": [384,64],
+							"px": [384,128],
 							"fieldInstances": []
 						},
 						{
@@ -1887,7 +1911,7 @@
 					"visible": true,
 					"optionalRules": [],
 					"intGrid": [
-						{ "coordId": 22, "v": 0 },
+						{ "coordId": 38, "v": 0 },
 						{ "coordId": 49, "v": 0 },
 						{ "coordId": 54, "v": 1 },
 						{ "coordId": 65, "v": 0 },
@@ -1927,8 +1951,8 @@
 						{ "coordId": 253, "v": 1 }
 					],
 					"intGridCsv": [
-						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,
-						0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,
 						2,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,1,
 						0,0,0,0,0,0,0,0,0,0,0,1,0,2,0,1,0,0,0,0,2,0,0,0,0,0,0,0,0,2,0,0,0,0,0,
 						1,2,1,1,0,0,0,1,0,0,2,0,0,0,0,0,0,2,0,0,0,0,0,1,1,0,2,0,0,0,0,0,0,2,0,
@@ -1949,14 +1973,14 @@
 						{ "px": [64,192], "src": [64,128], "f": 0, "t": 13, "d": [52,49] },
 						{ "px": [320,256], "src": [64,320], "f": 0, "t": 31, "d": [81,69] },
 						{ "px": [768,512], "src": [64,320], "f": 0, "t": 31, "d": [81,140] },
-						{ "px": [384,64], "src": [320,128], "f": 0, "t": 17, "d": [70,22] },
 						{ "px": [256,448], "src": [320,128], "f": 0, "t": 17, "d": [70,116] },
 						{ "px": [576,768], "src": [320,128], "f": 0, "t": 17, "d": [70,201] },
 						{ "px": [64,256], "src": [0,256], "f": 0, "t": 24, "d": [72,81] },
 						{ "px": [64,320], "src": [0,320], "f": 0, "t": 30, "d": [72,81] },
 						{ "px": [512,384], "src": [0,256], "f": 0, "t": 24, "d": [72,120] },
 						{ "px": [512,448], "src": [0,320], "f": 0, "t": 30, "d": [72,120] },
-						{ "px": [384,256], "src": [192,320], "f": 0, "t": 33, "d": [88,70] }
+						{ "px": [384,256], "src": [192,320], "f": 0, "t": 33, "d": [88,70] },
+						{ "px": [384,128], "src": [320,128], "f": 0, "t": 17, "d": [92,38] }
 					],
 					"seed": 3227972,
 					"overrideTilesetUid": null,
