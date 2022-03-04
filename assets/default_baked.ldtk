@@ -15,7 +15,7 @@
 	"worldGridHeight": 256,
 	"defaultPivotX": 0,
 	"defaultPivotY": 0,
-	"defaultGridSize": 16,
+	"defaultGridSize": 64,
 	"defaultLevelWidth": 256,
 	"defaultLevelHeight": 256,
 	"bgColor": "#AEBCE9",
