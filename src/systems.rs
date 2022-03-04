@@ -242,6 +242,7 @@ fn is_position_in_bounds(x_or_y: f32) -> bool {
 }
 
 // Return top-left
+#[allow(dead_code)]
 fn tile_pos_to_sprite_pos(x: i32, y: i32) -> Vec3 {
     let size = TILE_SIZE as f32;
     let half = size / 2.;
@@ -252,7 +253,6 @@ pub fn build_tilemap_with_added_tiles(
     mut tile_map: ResMut<TileMap>,
     wall_query: Query<&Transform, Added<WallTile>>,
     climbable_query: Query<&Transform, Added<ClimbableTile>>,
-    ice_query: Query<&Transform, Added<StaticIce>>,
 ) {
     for wall_transform in wall_query.iter() {
         tile_map.0.insert(
@@ -279,7 +279,6 @@ pub fn move_player_from_input(
         (&Speed, &mut Health, &mut Transform),
         (With<Player>, Without<FallingIce>),
     >,
-    falling_ice_query: Query<&Transform, (With<FallingIce>, Without<Player>)>,
     game_sounds: Res<GameSounds>,
     audio: Res<Audio>,
 ) {
@@ -343,22 +342,12 @@ pub fn move_player_from_input(
                 };
             }
 
-            let mut new_pos_is_ice = false;
-            for t in falling_ice_query.iter() {
-                if t.translation == new_position {
-                    new_pos_is_ice = true;
-                }
-            }
-
             match tile {
                 TileType::Wall => {
                     new_position_is_valid.0 = wall_is_under;
                 }
                 TileType::Ladder => {
                     new_position_is_valid.1 = true;
-                }
-                _ => {
-                    new_position_is_valid.1 = new_pos_is_ice;
                 }
             }
         }
@@ -673,8 +662,6 @@ pub fn spawn_falling_ice_over_player(
         }
 
         if found_ice {
-            // let sprite_pos = tile_pos_to_sprite_pos(x, j);
-            // oh no
             break;
         } else {
             match tile_map.0.get(&tile_to_inspect) {
