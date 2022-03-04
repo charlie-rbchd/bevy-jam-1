@@ -44,7 +44,6 @@ fn main() {
         .add_state(components::AppState::MainMenu)
         .register_ldtk_int_cell::<components::WallTileBundle>(1)
         .register_ldtk_int_cell::<components::ClimableTileBundle>(2)
-        .register_ldtk_int_cell::<components::FallingIceTileBundle>(3)
         .register_ldtk_entity::<components::PlayerBundle>("Player")
         .register_ldtk_entity::<components::ObstacleSpikeBundle>("ObstacleSpike")
         .register_ldtk_entity::<components::ObstacleBlockBundle>("ObstacleBlock")

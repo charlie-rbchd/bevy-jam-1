@@ -8,7 +8,7 @@ use rand::Rng;
 const SPEED_BUTTON_LABEL: &str = "SPEED";
 const STRENGTH_BUTTON_LABEL: &str = "STRENGTH";
 const HEALTH_BUTTON_LABEL: &str = "HEALTH";
-const NUM_LEVELS: usize = 2;
+const NUM_LEVELS: usize = 4;
 
 pub fn setup(asset_server: Res<AssetServer>, audio: Res<Audio>) {
     asset_server.watch_for_changes().unwrap();
@@ -172,7 +172,13 @@ pub fn handle_ui_buttons(
 const TILE_SIZE: i32 = 64;
 const WORLD_SIZE: i32 = 16;
 
-pub fn load_world(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn load_world(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut level_selection: ResMut<LevelSelection>,
+) {
+    *level_selection = LevelSelection::Index(0);
+
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
     commands.spawn_bundle(LdtkWorldBundle {
         ldtk_handle: asset_server.load("default_baked.ldtk"),
@@ -451,7 +457,7 @@ pub fn check_for_player_death(
 pub fn check_player_reached_goal(
     goal_query: Query<&Transform, With<Goal>>,
     player_query: Query<&Transform, (With<Player>, Changed<Transform>)>,
-    mut _tile_map: ResMut<TileMap>,
+    mut tile_map: ResMut<TileMap>,
     mut _app_state: ResMut<State<AppState>>,
     mut game_state: ResMut<GameState>,
     game_sounds: Res<GameSounds>,
@@ -463,6 +469,7 @@ pub fn check_player_reached_goal(
             if entities_are_overlapping(player_transform, goal_transform) {
                 audio.play(game_sounds.goal_sfx.clone());
                 game_state.level_index = (game_state.level_index + 1) % NUM_LEVELS;
+                tile_map.0.clear();
                 *level_selection = LevelSelection::Index(game_state.level_index);
                 // return_to_main_menu(&mut tile_map, &mut app_state, &mut game_state);
             }

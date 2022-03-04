@@ -299,14 +299,6 @@ pub struct ClimableTileBundle {
     pub climbable: ClimbableTile,
 }
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component)]
-pub struct FallingIceTile;
-
-#[derive(Clone, Debug, Default, Bundle, LdtkIntCell)]
-pub struct FallingIceTileBundle {
-    pub falling_ice: FallingIceTile,
-}
-
 // The actual falling ice, when the player goes underneath
 // the falling ice tile
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component)]
