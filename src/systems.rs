@@ -203,9 +203,17 @@ pub fn load_world(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
     // preload textures
     commands.insert_resource(GameTextures {
-        player: asset_server.load("Player.png"),
-        player_climbing: asset_server.load("PlayerClimbing.png"),
-        player_falling: asset_server.load("PlayerFalling.png"),
+        player_health_standing: asset_server.load("PlayerHealthStanding.png"),
+        player_speed_standing: asset_server.load("PlayerSpeedStanding.png"),
+        player_strength_standing: asset_server.load("PlayerStrengthStanding.png"),
+
+        player_health_climbing: asset_server.load("PlayerHealthClimbing.png"),
+        player_speed_climbing: asset_server.load("PlayerSpeedClimbing.png"),
+        player_strength_climbing: asset_server.load("PlayerStrengthClimbing.png"),
+
+        player_health_falling: asset_server.load("PlayerHealthFalling.png"),
+        player_speed_falling: asset_server.load("PlayerSpeedFalling.png"),
+        player_strength_falling: asset_server.load("PlayerStrengthFalling.png"),
     });
 }
 
@@ -552,12 +560,26 @@ pub fn apply_player_visual_effects(
             None => false,
         };
 
-        if player_is_climbing {
-            *texture = game_textures.player_climbing.clone();
-        } else if player_is_falling {
-            *texture = game_textures.player_falling.clone();
-        } else {
-            *texture = game_textures.player.clone();
+        if let Some(advantage) = &game_state.player_advantage {
+            if player_is_climbing {
+                *texture = match advantage {
+                    Advantage::Health => game_textures.player_health_climbing.clone(),
+                    Advantage::Speed => game_textures.player_speed_climbing.clone(),
+                    Advantage::Strength => game_textures.player_strength_climbing.clone(),
+                };
+            } else if player_is_falling {
+                *texture = match advantage {
+                    Advantage::Health => game_textures.player_health_falling.clone(),
+                    Advantage::Speed => game_textures.player_speed_falling.clone(),
+                    Advantage::Strength => game_textures.player_strength_falling.clone(),
+                };
+            } else {
+                *texture = match advantage {
+                    Advantage::Health => game_textures.player_health_standing.clone(),
+                    Advantage::Speed => game_textures.player_speed_standing.clone(),
+                    Advantage::Strength => game_textures.player_strength_standing.clone(),
+                };
+            }
         }
     }
 }

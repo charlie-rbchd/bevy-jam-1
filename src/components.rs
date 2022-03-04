@@ -23,9 +23,17 @@ pub struct UiSounds {
 }
 
 pub struct GameTextures {
-    pub player: Handle<Image>,
-    pub player_climbing: Handle<Image>,
-    pub player_falling: Handle<Image>,
+    pub player_health_standing: Handle<Image>,
+    pub player_speed_standing: Handle<Image>,
+    pub player_strength_standing: Handle<Image>,
+
+    pub player_health_climbing: Handle<Image>,
+    pub player_speed_climbing: Handle<Image>,
+    pub player_strength_climbing: Handle<Image>,
+
+    pub player_health_falling: Handle<Image>,
+    pub player_speed_falling: Handle<Image>,
+    pub player_strength_falling: Handle<Image>,
 }
 
 pub struct GameSounds {
